@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2018, PickNik Inc.
+ *  Copyright (c) 2022, Peter David Fagan
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,43 +32,29 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/* Author: Dave Coleman
-   Desc:   Simple utility to see all the collision objects in a planning scene, including attached
-*/
+/* Author: Peter David Fagan */
 
-// MoveIt
-#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
-#include <rclcpp/executors/multi_threaded_executor.hpp>
-#include <rclcpp/logger.hpp>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/node.hpp>
-#include <rclcpp/utilities.hpp>
+#include <moveit/moveit_cpp/moveit_cpp.h>
+#include <moveit/moveit_cpp/planning_component.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 
-static const std::string ROBOT_DESCRIPTION = "robot_description";
-static const rclcpp::Logger LOGGER = rclcpp::get_logger("print_planning_scene_info");
+namespace py = pybind11;
 
-int main(int argc, char** argv)
+namespace moveit_py
 {
-  rclcpp::init(argc, argv);
+namespace bind_planning_component
+{
+bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_components, py::object& pose_stamped,
+              std::string link_name);
 
-  auto node = rclcpp::Node::make_shared("print_scene_info_to_console");
+bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::list& constraints);
 
-  rclcpp::executors::MultiThreadedExecutor executor;
-  executor.add_node(node);
+bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::array_t<double> pose_goal,
+              std::string& link_name);
 
-  RCLCPP_INFO_STREAM(LOGGER, "Getting planning scene info to print");
+bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
+                          py::object path_constraints);
 
-  // Create planning scene monitor
-  planning_scene_monitor::PlanningSceneMonitor psm(node, ROBOT_DESCRIPTION);
-  if (!psm.getPlanningScene())
-  {
-    RCLCPP_ERROR_STREAM(LOGGER, "Planning scene not configured");
-    return 1;
-  }
-
-  psm.requestPlanningSceneState(planning_scene_monitor::PlanningSceneMonitor::DEFAULT_GET_PLANNING_SCENE_SERVICE);
-
-  psm.getPlanningScene()->printKnownObjects();
-
-  return 0;
-}
+}  // namespace bind_planning_component
+}  // namespace moveit_py

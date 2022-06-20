@@ -62,7 +62,8 @@ const std::string PlanningSceneMonitor::DEFAULT_ATTACHED_COLLISION_OBJECT_TOPIC 
 const std::string PlanningSceneMonitor::DEFAULT_COLLISION_OBJECT_TOPIC = "collision_object";
 const std::string PlanningSceneMonitor::DEFAULT_PLANNING_SCENE_WORLD_TOPIC = "planning_scene_world";
 const std::string PlanningSceneMonitor::DEFAULT_PLANNING_SCENE_TOPIC = "planning_scene";
-const std::string PlanningSceneMonitor::DEFAULT_PLANNING_SCENE_SERVICE = "get_planning_scene";
+const std::string PlanningSceneMonitor::DEFAULT_GET_PLANNING_SCENE_SERVICE = "get_planning_scene";
+const std::string PlanningSceneMonitor::DEFAULT_APPLY_PLANNING_SCENE_SERVICE = "apply_planning_scene";
 const std::string PlanningSceneMonitor::MONITORED_PLANNING_SCENE_TOPIC = "monitored_planning_scene";
 
 PlanningSceneMonitor::PlanningSceneMonitor(const rclcpp::Node::SharedPtr& node, const std::string& robot_description,
@@ -590,9 +591,13 @@ bool PlanningSceneMonitor::requestPlanningSceneState(const std::string& service_
   return false;
 }
 
-void PlanningSceneMonitor::providePlanningSceneService(const std::string& service_name)
+void PlanningSceneMonitor::providePlanningSceneService(const std::string& apply_service_name, const std::string& get_service_name)
 {
   // Load the service
+  apply_scene_service_ = pnode_->create_service<moveit_msgs::srv::ApplyPlanningScene>(
+      apply_service_name, [this](moveit_msgs::srv::ApplyPlanningScene::Request::SharedPtr req,
+                           moveit_msgs::srv::ApplyPlanningScene::Response::SharedPtr res) { return applyPlanningSceneServiceCallback(req, res); });
+
   get_scene_service_ = pnode_->create_service<moveit_msgs::srv::GetPlanningScene>(
       service_name, [this](const moveit_msgs::srv::GetPlanningScene::Request::SharedPtr& req,
                            const moveit_msgs::srv::GetPlanningScene::Response::SharedPtr& res) {

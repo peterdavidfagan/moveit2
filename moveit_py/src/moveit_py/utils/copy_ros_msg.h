@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2018, PickNik Inc.
+ *  Copyright (c) 2022, Peter David Fagan
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,43 +32,47 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/* Author: Dave Coleman
-   Desc:   Simple utility to see all the collision objects in a planning scene, including attached
-*/
+/* Author: Peter David Fagan */
 
-// MoveIt
-#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
-#include <rclcpp/executors/multi_threaded_executor.hpp>
-#include <rclcpp/logger.hpp>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/node.hpp>
-#include <rclcpp/utilities.hpp>
+#pragma once
 
-static const std::string ROBOT_DESCRIPTION = "robot_description";
-static const rclcpp::Logger LOGGER = rclcpp::get_logger("print_planning_scene_info");
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <moveit_msgs/msg/collision_object.hpp>
+#include <moveit_msgs/msg/constraints.hpp>
+#include <pybind11/pybind11.h>
 
-int main(int argc, char** argv)
-{
-  rclcpp::init(argc, argv);
+namespace py = pybind11;
 
-  auto node = rclcpp::Node::make_shared("print_scene_info_to_console");
+geometry_msgs::msg::PoseStamped PoseStampedToCpp(py::object pose_stamped);
 
-  rclcpp::executors::MultiThreadedExecutor executor;
-  executor.add_node(node);
+// TODO(peterdavidfagan): consider creating typecaster
+geometry_msgs::msg::Pose PoseToCpp(py::object pose);
+py::object PoseToPy(geometry_msgs::msg::Pose pose);
 
-  RCLCPP_INFO_STREAM(LOGGER, "Getting planning scene info to print");
+geometry_msgs::msg::Point PointToCpp(py::object point);
 
-  // Create planning scene monitor
-  planning_scene_monitor::PlanningSceneMonitor psm(node, ROBOT_DESCRIPTION);
-  if (!psm.getPlanningScene())
-  {
-    RCLCPP_ERROR_STREAM(LOGGER, "Planning scene not configured");
-    return 1;
-  }
+geometry_msgs::msg::Vector3 Vector3ToCpp(py::object vector3);
 
-  psm.requestPlanningSceneState(planning_scene_monitor::PlanningSceneMonitor::DEFAULT_GET_PLANNING_SCENE_SERVICE);
+geometry_msgs::msg::Quaternion QuaternionToCpp(py::object quaternion);
 
-  psm.getPlanningScene()->printKnownObjects();
+shape_msgs::msg::SolidPrimitive SolidPrimitiveToCpp(py::object primitive);
 
-  return 0;
-}
+shape_msgs::msg::MeshTriangle MeshTriangleToCpp(py::object mesh_triangle);
+
+shape_msgs::msg::Mesh MeshToCpp(py::object mesh);
+
+moveit_msgs::msg::BoundingVolume BoundingVolumeToCpp(py::object bounding_volume);
+
+moveit_msgs::msg::JointConstraint JointConstraintToCpp(py::object joint_constraint);
+
+moveit_msgs::msg::PositionConstraint PositionConstraintToCpp(py::object position_constraint);
+
+moveit_msgs::msg::OrientationConstraint OrientationConstraintToCpp(py::object orientation_constraint);
+
+moveit_msgs::msg::VisibilityConstraint VisibilityConstraintToCpp(py::object visibility_constraint);
+
+moveit_msgs::msg::CollisionObject CollisionObjectToCpp(py::object collision_object);
+
+moveit_msgs::msg::Constraints ConstraintsToCpp(py::object constraints);
+
+// TODO (peterdavidfagan): come up with a more clever way of casting python rosmsg to cpp rosmsg
