@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  psm.requestPlanningSceneState(planning_scene_monitor::PlanningSceneMonitor::DEFAULT_PLANNING_SCENE_SERVICE);
+  psm.requestPlanningSceneState(planning_scene_monitor::PlanningSceneMonitor::DEFAULT_GET_PLANNING_SCENE_SERVICE);
 
   psm.getPlanningScene()->printKnownObjects();
 

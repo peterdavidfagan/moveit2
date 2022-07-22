@@ -45,6 +45,7 @@
 #include <moveit/occupancy_map_monitor/occupancy_map_monitor.h>
 #include <moveit/planning_scene_monitor/current_state_monitor.h>
 #include <moveit/collision_plugin_loader/collision_plugin_loader.h>
+#include <moveit_msgs/srv/apply_planning_scene.hpp>
 #include <moveit_msgs/srv/get_planning_scene.hpp>
 #include <memory>
 #include <thread>
@@ -110,7 +111,10 @@ public:
   static const std::string DEFAULT_PLANNING_SCENE_TOPIC;  // "/planning_scene"
 
   /// The name of the service used by default for requesting full planning scene state
-  static const std::string DEFAULT_PLANNING_SCENE_SERVICE;  // "/get_planning_scene"
+  static const std::string DEFAULT_GET_PLANNING_SCENE_SERVICE;  // "/get_planning_scene"
+
+  /// The name of the service used by default for requesting applying a planning scene state
+  static const std::string DEFAULT_APPLY_PLANNING_SCENE_SERVICE;  // "/apply_planning_scene"
 
   /// The name of the topic used by default for publishing the monitored planning scene (this is without "/" in the
   /// name, so the topic is prefixed by the node name)
@@ -357,7 +361,7 @@ public:
    *         This must be a service of type moveit_msgs::srv::GetPlanningScene and is usually called
    *         "/get_planning_scene".
    */
-  bool requestPlanningSceneState(const std::string& service_name = DEFAULT_PLANNING_SCENE_SERVICE);
+  bool requestPlanningSceneState(const std::string& service_name = DEFAULT_GET_PLANNING_SCENE_SERVICE);
 
   /** @brief Create an optional service for getting the complete planning scene
    *         This is useful for satisfying the Rviz PlanningScene display's need for a service
@@ -366,7 +370,7 @@ public:
    *         as it will create a pointless feedback loop.
    *  @param service_name The topic to provide the service
    */
-  void providePlanningSceneService(const std::string& service_name = DEFAULT_PLANNING_SCENE_SERVICE);
+  void providePlanningSceneService(const std::string& apply_service_name = DEFAULT_APPLY_PLANNING_SCENE_SERVICE, const std::string& get_service_name = DEFAULT_GET_PLANNING_SCENE_SERVICE);
 
   /** @brief Stop the scene monitor*/
   void stopSceneMonitor();
@@ -533,6 +537,7 @@ protected:
 
   // provide an optional service to get the full planning scene state
   // this is used by MoveGroup and related application nodes
+  rclcpp::Service<moveit_msgs::srv::ApplyPlanningScene>::SharedPtr apply_scene_service_;
   rclcpp::Service<moveit_msgs::srv::GetPlanningScene>::SharedPtr get_scene_service_;
 
   // include a octomap monitor
@@ -573,6 +578,10 @@ private:
 
   // Callback for a new planning scene msg
   void newPlanningSceneCallback(const moveit_msgs::msg::PlanningScene::SharedPtr scene);
+
+  // Callback for a applying a new planning scene via a service
+  void applyPlanningSceneServiceCallback(std::shared_ptr<moveit_msgs::srv::ApplyPlanningScene::Request> req,
+                                         std::shared_ptr<moveit_msgs::srv::ApplyPlanningScene::Response> res);
 
   // Callback for requesting the full planning scene via service
   void getPlanningSceneServiceCallback(moveit_msgs::srv::GetPlanningScene::Request::SharedPtr req,
