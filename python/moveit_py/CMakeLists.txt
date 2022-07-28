@@ -24,35 +24,35 @@ pybind11_add_module(core
 	src/moveit_py/core.cpp
 	src/moveit_py/moveit_core/robot_state/robot_state.cpp
 	src/moveit_py/moveit_core/robot_model/robot_model.cpp
-	src/moveit_py/util/utils.cpp
+	src/moveit_py/utils/copy_ros_msg.cpp
 	)
 target_link_libraries(core PRIVATE moveit_ros_planning::moveit_cpp
 				   rclcpp::rclcpp 
 				   moveit_core::moveit_robot_model 
 				   moveit_core::moveit_robot_state)
-target_include_directories(core PUBLIC src/moveit_py/util)
+target_include_directories(core PUBLIC src/moveit_py/utils)
 configure_build_install_location(core)
 
 pybind11_add_module(planning 
 	src/moveit_py/planning.cpp
         src/moveit_py/moveit_ros/moveit_cpp/moveit_cpp.cpp	
 	src/moveit_py/moveit_ros/moveit_cpp/planning_component.cpp
-	src/moveit_py/util/utils.cpp
+	src/moveit_py/utils/copy_ros_msg.cpp
 	)
 target_link_libraries(planning PRIVATE moveit_ros_planning::moveit_cpp
 				       moveit_ros_planning::moveit_planning_scene_monitor
 				       rclcpp::rclcpp)
-target_include_directories(planning PUBLIC src/moveit_py/util)
+target_include_directories(planning PUBLIC src/moveit_py/utils)
 configure_build_install_location(planning)
 
 pybind11_add_module(planning_interface
 	src/moveit_py/planning_interface.cpp
 	src/moveit_py/moveit_ros/planning_interface/planning_scene_interface.cpp
-	src/moveit_py/util/utils.cpp)
+	src/moveit_py/utils/copy_ros_msg.cpp)
 target_link_libraries(planning_interface PRIVATE moveit_ros_planning::moveit_planning_scene_monitor
 				       moveit_ros_planning_interface::moveit_planning_scene_interface
 				       rclcpp::rclcpp)
-target_include_directories(planning_interface PUBLIC src/moveit_py/util)
+target_include_directories(planning_interface PUBLIC src/moveit_py/utils)
 configure_build_install_location(planning_interface)
 
 ament_package()

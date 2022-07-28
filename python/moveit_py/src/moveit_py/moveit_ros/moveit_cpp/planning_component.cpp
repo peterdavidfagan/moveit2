@@ -34,7 +34,8 @@
 
 /* Author: Peter David Fagan */
 
-#include <utils.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
 #include "planning_component.h"
 
 

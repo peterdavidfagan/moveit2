@@ -34,7 +34,8 @@
 
 /* Author: Peter David Fagan */
 
-#include <utils.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
 #include "robot_state.h"
 
 Eigen::MatrixXd get_frame_transform(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string& frame_id)

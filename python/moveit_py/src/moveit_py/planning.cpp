@@ -39,7 +39,8 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <rclcpp/rclcpp.hpp>
-#include <utils.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
 
 #include "moveit_ros/moveit_cpp/planning_component.h"
 #include "moveit_ros/moveit_cpp/moveit_cpp.h"
@@ -83,6 +84,8 @@ PYBIND11_MODULE(planning, m)
       //.def(py::init<>()) for now this object is only accessible through the moveit_py.planning.MoveItPy class
       .def_property("name", &planning_scene_monitor::PlanningSceneMonitor::getName, nullptr,
                     "The name of the planning scene monitor.");
+  //.def("apply_collision_object", &apply_collision_object, py::arg("collision_object"),
+  //   "Apply a collision object to the planning scene.");
   //.def("get_state_monitor", &planning_scene_monitor::PlanningSceneMonitor::getStateMonitor,
   //   py::return_value_policy::reference_internal,
   //	   "Returns the state monitor of the planning scene monitor.")

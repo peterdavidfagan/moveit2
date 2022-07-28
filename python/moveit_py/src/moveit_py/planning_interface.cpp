@@ -39,7 +39,8 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <rclcpp/rclcpp.hpp>
-#include <utils.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
 
 #include "moveit_ros/planning_interface/planning_scene_interface.h"
 

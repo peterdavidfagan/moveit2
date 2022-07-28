@@ -42,7 +42,8 @@
 #include <moveit/robot_model/robot_model.h>
 #include <moveit/robot_model/joint_model.h>
 #include <moveit/robot_state/robot_state.h>
-#include <utils.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
 
 #include "moveit_core/robot_state/robot_state.h"
 #include "moveit_core/robot_model/robot_model.h"

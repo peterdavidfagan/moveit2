@@ -36,27 +36,31 @@
 
 #include <copy_ros_msg.h>
 #include <serialize_ros_msg.h>
-#include "planning_scene_interface.h"
 
-bool apply_collision_object(std::shared_ptr<moveit::planning_interface::PlanningSceneInterface>& planning_scene_interface,
-                            py::object& collision_object_msg)
+#include "planning_scene_monitor.h"
+
+void apply_collision_object(std::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>& planning_scene_monitor,
+                            py::object& collision_object)
 {
-  // convert python object to ROS message
-  moveit_msgs::msg::CollisionObject collision_object_cpp = CollisionObjectToCpp(collision_object_msg);
+  // convert python object to C++ object
+  moveit_msgs::msg::CollisionObject collision_object_cpp = CollisionObjectToCpp(collision_object);
 
-  // apply collision object
-  return planning_scene_interface->applyCollisionObject(collision_object_cpp);
+  // lock planning scene
+  {
+    planning_scene_monitor::LockedPlanningSceneRW scene(planning_scene_monitor);
+    scene->processCollisionObjectMsg(collision_object_cpp);
+  }
 }
 
-py::dict get_object_poses(std::shared_ptr<moveit::planning_interface::PlanningSceneInterface> planning_interface,
-                          std::vector<std::string> object_ids)
+void set_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>& planning_scene_monitor,
+                        py::object& planning_scene)
 {
-  auto object_poses = planning_interface->getObjectPoses(object_ids);
-  py::dict object_poses_py;
-  for (auto& object_pose : object_poses)
-  {
-    object_poses_py[py::str(object_pose.first)] = PoseToPy(object_pose.second);
-  }
+  // convert pyhton object to C++ object
+  moveit_msgs::msg::PlanningScene planning_scene_cpp = PlanningSceneToCpp(planning_scene);
 
-  return object_poses_py;
+  // lock planning scene
+  {
+    planning_scene_monitor::LockedPlanningSceneRW scene(planning_scene_monitor);
+    scene->setPlanningSceneMsg(planning_scene_cpp);
+  }
 }
