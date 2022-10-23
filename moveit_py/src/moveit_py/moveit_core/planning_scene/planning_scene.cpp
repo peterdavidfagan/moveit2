@@ -34,9 +34,6 @@
 
 /* Author: Peter David Fagan */
 
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
-
 #include "planning_scene.h"
 
 namespace moveit_py
@@ -186,5 +183,321 @@ void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_
   //}
 }
 
+void init_planning_scene(py::module& m)
+{
+  py::class_<planning_scene::PlanningScene, std::shared_ptr<planning_scene::PlanningScene>>(m, "PlanningScene",
+                                                                                            R"(
+      Representation of the environment as seen by a planning instance. The environment geometry, the robot geometry and state are maintained.
+      )")
+
+      // properties
+      .def_property("name", &planning_scene::PlanningScene::getName, &planning_scene::PlanningScene::setName,
+                    R"(
+                    str: The name of the planning scene.
+                    )")
+
+      .def_property("robot_model", &planning_scene::PlanningScene::getRobotModel, nullptr,
+                    py::return_value_policy::move,
+                    R"(
+                    :py:class:`moveit_py.core.RobotModel`: The robot model associated to this planning scene.
+                    )")
+
+      .def_property("planning_frame", &planning_scene::PlanningScene::getPlanningFrame, nullptr,
+                    py::return_value_policy::move,
+                    R"(
+                    str: The frame in which planning is performed.
+                    )")
+
+      .def_property("current_state", &planning_scene::PlanningScene::getCurrentState,
+                    &moveit_py::bind_planning_scene::set_current_state, py::return_value_policy::move,
+                    R"(
+                    :py:class:`moveit_py.core.RobotState`: The current state of the robot.
+                    )")
+
+      .def_property("planning_scene_message", &moveit_py::bind_planning_scene::get_planning_scene_msg, nullptr,
+                    py::return_value_policy::move)
+      // TODO (peterdavidfagan): requires binding of transform object.
+      //.def_property("transforms", &planning_scene::PlanningScene::getTransforms, nullptr)
+
+      // methods
+      .def("knows_frame_transform",
+           py::overload_cast<const moveit::core::RobotState&, const std::string&>(
+               &planning_scene::PlanningScene::knowsFrameTransform, py::const_),
+           py::arg("robot_state"), py::arg("frame_id"),
+           R"(
+           Check if a transform to the frame id is known.
+           This will be known if id is a link name, an attached body id or a collision object.
+           Args:
+               robot_state (:py:class:`moveit_py.core.RobotState`): The robot state to check.
+               frame_id (str): The frame id to check.
+           Returns:
+               bool: True if the transform is known, false otherwise.
+           )")
+
+      .def("knows_frame_transform",
+           py::overload_cast<const std::string&>(&planning_scene::PlanningScene::knowsFrameTransform, py::const_),
+           py::arg("frame_id"),
+           R"(
+           Check if a transform to the frame id is known.
+           This will be known if id is a link name, an attached body id or a collision object.
+           Args:
+               robot_state (:py:class:`moveit_py.core.RobotState`): The robot state to check.
+               frame_id (str): The frame id to check.
+           Returns:
+               bool: True if the transform is known, false otherwise.
+           )")
+
+      .def("get_frame_transform", &moveit_py::bind_planning_scene::get_frame_transform, py::arg("frame_id"),
+           R"(
+           Get the transform corresponding to the frame id. 
+           This will be known if id is a link name, an attached body id or a collision object. Return identity when no transform is available.
+           Args:
+               frame_id (str): The frame id to get the transform for.
+           Returns:
+               :py:class:`numpy.ndarray`: The transform corresponding to the frame id.
+           )")
+
+      //.def("get_current_state_updated", &moveit_py::bind_planning_scene::get_current_state_updated, py::arg("update"),
+      //     R"(
+      //     Get a copy of the current state with components overwritten by the state message update.
+      //
+      //     Args:
+      //         update (:py:class:`moveit_msgs.msg.RobotState`): The update to apply to the current state.
+      //
+      //     Returns:
+      //         :py:class:`moveit_py.core.RobotState`: The current robot state after applying the update.
+      //      )")
+
+      // writing to the planning scene
+      .def("apply_planning_scene_world", &moveit_py::bind_planning_scene::apply_planning_scene_world, py::arg("scene"),
+           R"(
+           Apply a planning scene world message to the current planning scene.
+           Args:
+               scene (:py:class:`moveit_msgs.msg.PlanningSceneWorld`): The planning scene world message to apply.
+       )")
+
+      //.def("apply_collision_object", py::overload_cast<std::shared_ptr<planning_scene::PlanningScene>&,
+      // py::object&>(&moveit_py::bind_planning_scene::apply_collision_object), py::arg("object"), R"( Apply
+      // a collision object to the planning scene.
+      //
+      // Args:
+      //    object (moveit_msgs.msg.CollisionObject): The collision object to apply to the planning scene.
+      //)")
+
+      .def("apply_collision_object", &moveit_py::bind_planning_scene::apply_collision_object,
+           py::arg("collision_object_msg"), py::arg("color_msg") = py::none(),
+           R"(
+           Apply a collision object to the planning scene.
+           Args:
+               object (moveit_msgs.msg.CollisionObject): The collision object to apply to the planning scene.
+           color (moveit_msgs.msg.ObjectColor, optional): The color of the collision object. Defaults to None if not specified.
+           )")
+
+      .def("apply_attached_collision_object", &moveit_py::bind_planning_scene::apply_attached_collision_object,
+           py::arg("object"),
+           R"(
+           Apply an attached collision object to the planning scene.
+           Args:
+               object (moveit_msgs.msg.AttachedCollisionObject): The attached collision object to apply to the planning scene.
+           )")
+
+      .def("apply_octomap", &moveit_py::bind_planning_scene::apply_octomap,
+           R"(
+           Apply an octomap to the planning scene.
+           Args:
+               octomap (moveit_msgs.msg.Octomap): The octomap to apply to the planning scene.
+           )")
+
+      .def("remove_all_collision_objects", &planning_scene::PlanningScene::removeAllCollisionObjects,
+           R"(
+           Removes collision objects from the planning scene.
+	   This method will remove all collision object from the scene except for attached collision objects.
+           )")
+
+      // checking state validity
+      .def("is_state_colliding",
+           py::overload_cast<std::shared_ptr<planning_scene::PlanningScene>&, std::string, bool>(
+               &moveit_py::bind_planning_scene::is_state_colliding),
+           py::arg("joint_model_group_name"), py::arg("verbose") = false,
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               joint_model_group_name (str): The name of the group to check collision for.
+               verbose (bool): If true, print the link names of the links in collision.
+           Returns:
+               bool: True if the robot state is in collision, false otherwise.
+           )")
+
+      .def("is_state_colliding",
+           py::overload_cast<std::shared_ptr<planning_scene::PlanningScene>&, const moveit::core::RobotState&,
+                             const std::string&, bool>(&moveit_py::bind_planning_scene::is_state_colliding),
+           py::arg("robot_state"), py::arg("joint_model_group_name"), py::arg("verbose") = false,
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               robot_state (:py:class:`moveit_py.core.RobotState`): The robot state to check collision for.
+               joint_model_group_name (str): The name of the group to check collision for.
+               verbose (bool): If true, print the link names of the links in collision.
+           Returns:
+               bool: True if the robot state is in collision, false otherwise.
+           )")
+
+      .def("is_state_constrained", &moveit_py::bind_planning_scene::is_state_constrained, py::arg("state"),
+           py::arg("constraints"), py::arg("verbose") = false,
+           R"(
+           Check if the robot state fulfills the passed constraints
+           Args:
+               state (moveit_py.core.RobotState): The robot state to check constraints for.
+                   constraints (moveit_msgs.msg.Constraints): The constraints to check.
+           verbose (bool): 
+           Returns:
+               bool: true if state is contrained otherwise false.
+           )")
+
+      .def("is_path_valid", &moveit_py::bind_planning_scene::is_path_valid, py::arg("path"),
+           py::arg("joint_model_group_name"), py::arg("verbose") = false,
+           R"(
+           Check if a given path is valid. 
+           Each state is checked for validity (collision avoidance and feasibility)
+           Args:
+               path (:py:class:`moveit_py.core.RobotTrajectory`): The trajectory to check.
+               joint_model_group_name (str): The joint model group to check the path against.
+               verbose (bool): 
+           Returns:
+               bool: true if the path is valid otherwise false.
+           )")
+
+      // TODO (peterdavidfagan): remove collision result from input parameters and write separate binding code.
+      // TODO (peterdavidfagan): consider merging check_collision and check_collision_unpadded into one function with unpadded_param
+      .def("check_collision",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&>(
+               &planning_scene::PlanningScene::checkCollision),
+           py::arg("collision_request"), py::arg("collision_result"),
+           R"(
+           Check whether the current state is in collision, and if needed, updates the collision transforms of the current state before the computation.
+           Args:
+               collision_request (:py:class:`moveit_py.core.CollisionRequest`): The collision request to use.
+               collision_result (:py:class:`moveit_py.core.CollisionResult`): The collision result to update
+           Returns:
+               bool: true if state is in collision otherwise false.
+           )")
+
+      .def("check_collision",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&,
+                             moveit::core::RobotState&>(&planning_scene::PlanningScene::checkCollision, py::const_),
+           py::arg("collision_request"), py::arg("collision_result"), py::arg("state"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision_request ():
+               collision_result ():
+               state ():
+           Returns:
+               bool: true if state is in collision otherwise false.
+           )")
+
+      .def("check_collision",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&,
+                             moveit::core::RobotState&, const collision_detection::AllowedCollisionMatrix&>(
+               &planning_scene::PlanningScene::checkCollision, py::const_),
+           py::arg("collision_request"), py::arg("collision_result"), py::arg("state"), py::arg("acm"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision_request ():
+               collision_result ():
+               state ():
+           acm ():
+           Returns:
+               bool: true if state is in collision otherwise false.
+           )")
+
+      .def("check_collision_unpadded",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&>(
+               &planning_scene::PlanningScene::checkCollisionUnpadded),
+           py::arg("req"), py::arg("result"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision_request ():
+               collision_result ():
+           Returns: 
+               bool: true if state is in collision otherwise false.
+           )")
+
+      .def("check_collision_unpadded",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&,
+                             moveit::core::RobotState&>(&planning_scene::PlanningScene::checkCollisionUnpadded,
+                                                        py::const_),
+           py::arg("collision_request"), py::arg("collision_result"), py::arg("state"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision_request ():
+               collision_result ():
+               state ():
+           Returns:
+               bool: true if state is in collision otherwise false.
+           )")
+
+      .def("check_collision_unpadded",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&,
+                             moveit::core::RobotState&, const collision_detection::AllowedCollisionMatrix&>(
+               &planning_scene::PlanningScene::checkCollisionUnpadded, py::const_),
+           py::arg("collision_request"), py::arg("collision_result"), py::arg("state"), py::arg("acm"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision_request ():
+               collision_result ():
+               state ():
+           acm ():
+           Returns:
+               bool: true if state is in collision otherwise false.
+           )")
+
+      .def("check_self_collision",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&>(
+               &planning_scene::PlanningScene::checkSelfCollision),
+           py::arg("collision_request"), py::arg("collision_result"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision_request ():
+               collision_result ():
+           Returns:
+               bool: true if state is in collision otherwise false.
+           )")
+
+      .def("check_self_collision",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&,
+                             moveit::core::RobotState&>(&planning_scene::PlanningScene::checkSelfCollision, py::const_),
+           py::arg("collision_request"), py::arg("collision_result"), py::arg("state"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision request ():
+               collision_result ():
+               state ():
+           Returns:
+               bool: true if state is in self collision otherwise false.
+           )")
+
+      .def("check_self_collision",
+           py::overload_cast<const collision_detection::CollisionRequest&, collision_detection::CollisionResult&,
+                             moveit::core::RobotState&, const collision_detection::AllowedCollisionMatrix&>(
+               &planning_scene::PlanningScene::checkSelfCollision, py::const_),
+           py::arg("collision_request"), py::arg("collision_result"), py::arg("state"), py::arg("acm"),
+           R"(
+           Check if the robot state is in collision.
+           Args:
+               collision request ():
+               collision_result ():
+               state ():
+           acm():
+           Returns:
+               bool: true if state is in self collision otherwise false.
+           )");
+}
 }  // namespace bind_planning_scene
 }  // namespace moveit_py

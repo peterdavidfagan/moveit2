@@ -34,8 +34,12 @@
 
 /* Author: Peter David Fagan */
 
-#include <moveit/planning_scene/planning_scene.h>
+#pragma once
+
 #include <pybind11/pybind11.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
+#include <moveit/planning_scene/planning_scene.h>
 
 namespace py = pybind11;
 
@@ -82,5 +86,7 @@ moveit::core::RobotState& get_current_state(std::shared_ptr<planning_scene::Plan
 //                                                       py::object update);
 
 void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& robot_state);
+
+void init_planning_scene(py::module& m);
 }  // namespace bind_planning_scene
 }  // namespace moveit_py

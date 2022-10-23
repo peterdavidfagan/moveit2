@@ -34,41 +34,17 @@
 
 /* Author: Peter David Fagan */
 
-#pragma once
-
 #include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
-#include <moveit/moveit_cpp/moveit_cpp.h>
-#include <moveit/moveit_cpp/planning_component.h>
-
-#include "moveit_cpp.h"
-#include "../planning_scene_monitor/planning_scene_monitor.h"
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
+#include <moveit/collision_detection/collision_matrix.h>
 
 namespace py = pybind11;
 
 namespace moveit_py
 {
-namespace bind_planning_component
+namespace bind_collision_detection
 {
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_components, py::object& pose_stamped,
-              std::string link_name);
-
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::list& constraints);
-
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::array_t<double> pose_goal,
-              std::string& link_name);
-
-bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
-                          py::object path_constraints);
-
-void init_plan_request_parameters(py::module &m);
-
-void init_plan_solution(py::module &m);
-
-void init_planning_component_context_manager(py::module &m);
-
-void init_planning_component(py::module &m);
-}  // namespace bind_planning_component
+void init_acm(py::module &m);
+}  // namespace bind_collision_detection
 }  // namespace moveit_py

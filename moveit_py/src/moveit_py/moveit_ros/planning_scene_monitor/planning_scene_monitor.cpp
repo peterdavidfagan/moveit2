@@ -34,12 +34,6 @@
 
 /* Author: Peter David Fagan */
 
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
-#include <rclcpp/rclcpp.hpp>
-#include <moveit_msgs/msg/planning_scene.hpp>
-#include <moveit_msgs/srv/apply_planning_scene.hpp>
-
 #include "planning_scene_monitor.h"
 
 namespace moveit_py
@@ -124,5 +118,57 @@ void apply_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneM
 //  return response->success;
 //}
 
+void init_planning_scene_monitor(py::module& m)
+{
+  py::class_<planning_scene_monitor::PlanningSceneMonitor, planning_scene_monitor::PlanningSceneMonitorPtr>(
+      m, "PlanningSceneMonitor", R"(
+      Maintains the internal state of the planning scene.
+      )")
+
+      .def_property("name", &planning_scene_monitor::PlanningSceneMonitor::getName, nullptr,
+                    R"(
+                    str: The name of this planning scene monitor.
+                    )")
+
+      .def("start_scene_monitor", &planning_scene_monitor::PlanningSceneMonitor::startSceneMonitor,
+           R"(
+           Starts the scene monitor.
+           )")
+
+      .def("stop_scene_monitor", &planning_scene_monitor::PlanningSceneMonitor::stopSceneMonitor,
+           R"(
+           Stops the scene monitor.
+           )")
+
+      .def("start_state_monitor", &planning_scene_monitor::PlanningSceneMonitor::startStateMonitor,
+           R"(
+	   Starts the state monitor.
+	   )")
+
+      .def("stop_state_monitor", &planning_scene_monitor::PlanningSceneMonitor::stopStateMonitor,
+           R"(
+	       Stops the state monitor.
+	   )")
+
+      .def("wait_for_current_robot_state", &planning_scene_monitor::PlanningSceneMonitor::waitForCurrentRobotState,
+           R"(
+	   Waits for the current robot state to be received.
+	   )")
+
+      .def("clear_octomap", &planning_scene_monitor::PlanningSceneMonitor::clearOctomap,
+           R"(
+           Clears the octomap.
+           )")
+
+      .def("read_only", &moveit_py::bind_planning_scene_monitor::read_only,
+           R"(
+           Returns a read-only context manager for the planning scene.
+           )")
+
+      .def("read_write", &moveit_py::bind_planning_scene_monitor::read_write,
+           R"(
+           Returns a read-write context manager for the planning scene.
+           )");
+}
 }  // namespace bind_planning_scene_monitor
 }  // namespace moveit_py

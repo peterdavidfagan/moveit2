@@ -36,8 +36,11 @@
 
 #pragma once
 
-#include <moveit/robot_state/robot_state.h>
 #include <pybind11/pybind11.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
+#include <tf2_eigen/tf2_eigen.hpp>
+#include <moveit/robot_state/robot_state.h>
 
 namespace py = pybind11;
 
@@ -74,5 +77,7 @@ Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_st
 
 bool set_to_default_values(std::shared_ptr<moveit::core::RobotState>& robot_state,
                            const std::string& joint_model_group_name, const std::string& state_name);
+
+void init_robot_state(py::module& m);
 }  // namespace bind_robot_state
 }  // namespace moveit_py

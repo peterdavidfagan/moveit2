@@ -34,41 +34,28 @@
 
 /* Author: Peter David Fagan */
 
-#pragma once
-
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
-#include <moveit/moveit_cpp/moveit_cpp.h>
-#include <moveit/moveit_cpp/planning_component.h>
-
-#include "moveit_cpp.h"
-#include "../planning_scene_monitor/planning_scene_monitor.h"
-
-namespace py = pybind11;
+#include "joint_model_group.h"
 
 namespace moveit_py
 {
-namespace bind_planning_component
+namespace bind_robot_model
 {
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_components, py::object& pose_stamped,
-              std::string link_name);
+void init_joint_model_group(py::module& m)
+{
+  py::class_<moveit::core::JointModelGroup>(m, "JointModelGroup",
+                                            R"(
+          Representation of a group of joints that are part of a robot model.
+          )")
 
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::list& constraints);
+      .def_property("name", &moveit::core::JointModelGroup::getName, nullptr,
+                    R"(
+                    str: The name of the joint model group.
+                    )")
 
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::array_t<double> pose_goal,
-              std::string& link_name);
-
-bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
-                          py::object path_constraints);
-
-void init_plan_request_parameters(py::module &m);
-
-void init_plan_solution(py::module &m);
-
-void init_planning_component_context_manager(py::module &m);
-
-void init_planning_component(py::module &m);
-}  // namespace bind_planning_component
+      .def_property("joint_model_names", &moveit::core::JointModelGroup::getJointModelNames, nullptr,
+                    R"(
+                    list of str: The names of the joint models in the group.
+                    )");
+}
+}  // namespace bind_robot_model
 }  // namespace moveit_py

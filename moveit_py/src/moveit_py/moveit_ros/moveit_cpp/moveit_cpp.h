@@ -36,12 +36,18 @@
 
 #pragma once
 
-#include <moveit/moveit_cpp/moveit_cpp.h>
-#include <moveit/moveit_cpp/planning_component.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/eigen.h>
 #include <pybind11/stl.h>
+#include <moveit_msgs/msg/robot_state.h>
+#include <moveit_msgs/msg/move_it_error_codes.h>
+#include <serialize_ros_msg.h>
+#include <moveit/moveit_cpp/moveit_cpp.h>
+#include <moveit/moveit_cpp/planning_component.h>
+#include <rclcpp/rclcpp.hpp>
+
+#include "planning_component.h"
 
 namespace py = pybind11;
 
@@ -58,5 +64,7 @@ std::shared_ptr<robot_trajectory::RobotTrajectory>
 get_plan_solution_trajectory(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution);
 
 py::object get_plan_solution_error_code(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution);
+
+void init_moveit_py(py::module &m);
 }  // namespace bind_moveit_cpp
 }  // namespace moveit_py

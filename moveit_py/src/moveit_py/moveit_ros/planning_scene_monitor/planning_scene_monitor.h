@@ -34,8 +34,16 @@
 
 /* Author: Peter David Fagan */
 
-#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
+#pragma once
+
+
 #include <pybind11/pybind11.h>
+#include <copy_ros_msg.h>
+#include <serialize_ros_msg.h>
+#include <rclcpp/rclcpp.hpp>
+#include <moveit_msgs/msg/planning_scene.hpp>
+#include <moveit_msgs/srv/apply_planning_scene.hpp>
+#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 
 namespace py = pybind11;
 
@@ -113,5 +121,6 @@ read_only(const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_
 void apply_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>& planning_scene_monitor,
                           py::object& planning_scene);
 
+void init_planning_scene_monitor(py::module &m);
 }  // namespace bind_planning_scene_monitor
 }  // namespace moveit_py

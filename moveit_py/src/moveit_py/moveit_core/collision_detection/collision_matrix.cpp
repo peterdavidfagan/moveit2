@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik Inc. nor the names of its
+ *   * Neither the name of PickNik Inc. nor te names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -34,41 +34,27 @@
 
 /* Author: Peter David Fagan */
 
-#pragma once
-
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
-#include <moveit/moveit_cpp/moveit_cpp.h>
-#include <moveit/moveit_cpp/planning_component.h>
-
-#include "moveit_cpp.h"
-#include "../planning_scene_monitor/planning_scene_monitor.h"
-
-namespace py = pybind11;
+#include "collision_matrix.h"
 
 namespace moveit_py
 {
-namespace bind_planning_component
+namespace bind_collision_detection
 {
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_components, py::object& pose_stamped,
-              std::string link_name);
-
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::list& constraints);
-
-bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::array_t<double> pose_goal,
-              std::string& link_name);
-
-bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
-                          py::object path_constraints);
-
-void init_plan_request_parameters(py::module &m);
-
-void init_plan_solution(py::module &m);
-
-void init_planning_component_context_manager(py::module &m);
-
-void init_planning_component(py::module &m);
-}  // namespace bind_planning_component
+void init_acm(py::module &m)
+{
+  py::class_<collision_detection::AllowedCollisionMatrix, std::shared_ptr<collision_detection::AllowedCollisionMatrix>>(
+      m, "AllowedCollisionMatrix",
+      R"(
+          Definition of a structure for the allowed collision matrix. All elements in the collision world are referred to by their names. This class represents which collisions are allowed to happen and which are not.
+          )")
+      .def(py::init<std::vector<std::string>&, bool>(),
+           R"(
+       Initialize the allowed collision matrix using a list of names of collision objects.
+       Args:
+           names (list of str): A list of names of the objects in the collision world (corresponding to object IDs in the collision world).
+           allowed (bool): If false, indicates that collisions between all elements must be checked for and no collisions will be ignored.
+       )",
+           py::arg("names"), py::arg("default_entry") = false);
+}
+}  // namespace bind_collision_detection
 }  // namespace moveit_py
