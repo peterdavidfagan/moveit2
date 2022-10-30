@@ -1,4 +1,4 @@
-# MoveIt2 Python Library (beta-release)
+# MoveIt 2 Python Library
 <img src="./banner.png" width="50%">
 
 `moveit_py` is a Python library for interfacing with the core functionalities of Moveit 2. 
