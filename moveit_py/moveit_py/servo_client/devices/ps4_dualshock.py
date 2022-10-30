@@ -137,8 +137,3 @@ class PS4DualShockTeleop(TeleopDevice):
             self.logger.info.error(e)
             print(e)
 
-    def record(self):
-        """
-        Records trajectory data.
-        """
-        pass
