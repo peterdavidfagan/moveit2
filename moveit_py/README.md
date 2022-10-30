@@ -11,12 +11,6 @@ The project is split into the following folders:
     ├── moveit_py               # Python library stubs; Python functionalities built on top of bindings
     ├── src/moveit_py           # Pybind11 binding code
     ├── test                    # Unit and integration testing
-   
- 
-
-## Installation
-Placeholder
-
 
 ## Tutorials
 (1) [Using Jupyter Notebooks]()
