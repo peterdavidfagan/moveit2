@@ -63,6 +63,9 @@ void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& plan
   // convert collision object message to cpp equivalent
   moveit_msgs::msg::CollisionObject collision_object_cpp = CollisionObjectToCpp(collision_object_msg);
 
+  // apply collision object
+  planning_scene->processCollisionObjectMsg(collision_object_cpp);
+  
   // check if color message is provided
   if (color_msg.has_value())
   {
@@ -72,16 +75,8 @@ void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& plan
     py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(color_msg);
     deserializeMsg(serialized_msg, color_cpp);
 
-    // apply collision object
-    planning_scene->processCollisionObjectMsg(collision_object_cpp);
-
     // set object color
     planning_scene->setObjectColor(color_cpp.id, color_cpp.color);
-  }
-  else
-  {
-    // apply collision object
-    planning_scene->processCollisionObjectMsg(collision_object_cpp);
   }
 }
 
