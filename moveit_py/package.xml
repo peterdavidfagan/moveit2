@@ -3,7 +3,7 @@
 <package format="3">
   <name>moveit_py</name>
   <version>0.0.0</version>
-  <description>Python binding for Moveit2.</description>
+  <description>Python binding for MoveIt 2</description>
 
   <maintainer email="peterdavidfagan@gmail.com">Peter David Fagan</maintainer>
 
