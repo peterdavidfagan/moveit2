@@ -56,5 +56,7 @@ void init_acm(py::module &m)
        )",
            py::arg("names"), py::arg("default_entry") = false);
 }
+
+// TODO (peterdavidfagan): add bindings for getEntry and setEntry methods
 }  // namespace bind_collision_detection
 }  // namespace moveit_py
