@@ -68,8 +68,7 @@ Eigen::MatrixXd get_frame_transform(std::shared_ptr<moveit::core::RobotState>& r
   return transformation.matrix();
 }
 
-Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state,
-                                                       std::string& link_name)
+Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string& link_name)
 {
   auto transformation = robot_state->getGlobalLinkTransform(link_name);
   return transformation.matrix();
@@ -233,8 +232,8 @@ void init_robot_state(py::module& m)
                     )")
 
       // TODO (peterdavidfagan): move to property.
-      .def(
-          "get_state_info",
+      .def_property_readonly_static(
+          "state_info",
           [](std::shared_ptr<moveit::core::RobotState>& s) {
             std::stringstream ss;
             s->printStateInfo(ss);
@@ -242,9 +241,8 @@ void init_robot_state(py::module& m)
           },
           py::return_value_policy::move,
           R"(
-          Returns:
-              str: represents the current state information.
-          )")
+	  str: the state information of the robot state.
+	  )")
 
       // Getting and setting joint model group positions, velocities, accelerations
       .def("set_joint_group_positions",
