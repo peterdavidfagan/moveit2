@@ -39,11 +39,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
-#include <fstream>
-#include <urdf_parser/urdf_parser.h>
-#include <srdfdom/model.h>
-#include <srdfdom/srdf_writer.h>
-#include <moveit/robot_model/robot_model.h>
 
 namespace py = pybind11;
 
