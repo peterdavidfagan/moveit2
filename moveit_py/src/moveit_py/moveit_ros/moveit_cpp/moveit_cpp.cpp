@@ -176,19 +176,6 @@ void init_moveit_py(py::module& m)
           Shutdown the moveit_cpp node.
           )")
 
-      // TODO (peterdavidfagan): recreate as properties
-      //.def("get_current_state",
-      //     py::overload_cast<moveit::core::RobotStatePtr&, double>(&moveit_cpp::MoveItCpp::getCurrentState),
-      //     py::arg("current_state"), py::arg("wait_seconds") = 0.0, py::return_value_policy::take_ownership,
-      //     R"(
-      //         Returns the current state from planning scene monitor.
-      //     )")
-
-      //.def("get_current_state", py::overload_cast<double>(&moveit_cpp::MoveItCpp::getCurrentState),
-      //     py::arg("wait_seconds") = 0.0, py::return_value_policy::take_ownership,
-      //     R"(
-      //     )")
-
       .def("get_planning_scene_monitor", &moveit_cpp::MoveItCpp::getPlanningSceneMonitor,
            py::return_value_policy::reference,
            R"(
