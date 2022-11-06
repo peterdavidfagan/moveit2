@@ -102,22 +102,6 @@ void apply_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneM
   }
 }
 
-// provide the option to perform a service call when applying planning scene (feature from planning_scene_interface)
-// bool apply_planning_scene_service(const moveit_msgs::msg::PlanningScene& planning_scene)
-//{
-//  auto request = std::make_shared<moveit_msgs::srv::ApplyPlanningScene::Request>();
-//  moveit_msgs::srv::ApplyPlanningScene::Response::SharedPtr response;
-//  request->scene = planning_scene;
-//
-//  auto res = apply_planning_scene_service_->async_send_request(request);
-//  if (rclcpp::spin_until_future_complete(node_, res) != rclcpp::FutureReturnCode::SUCCESS)
-//  {
-//    RCLCPP_WARN(LOGGER, "Failed to call ApplyPlanningScene service");
-//  }
-//  response = res.get();
-//  return response->success;
-//}
-
 void init_planning_scene_monitor(py::module& m)
 {
   py::class_<planning_scene_monitor::PlanningSceneMonitor, planning_scene_monitor::PlanningSceneMonitorPtr>(
