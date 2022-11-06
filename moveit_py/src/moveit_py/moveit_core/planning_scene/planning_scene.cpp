@@ -51,12 +51,6 @@ void apply_planning_scene_world(std::shared_ptr<planning_scene::PlanningScene>& 
   planning_scene->processPlanningSceneWorldMsg(planning_scene_world_cpp);
 }
 
-// void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& collision_object)
-//{
-//   moveit_msgs::msg::CollisionObject collision_object_cpp = CollisionObjectToCpp(collision_object);
-//   planning_scene->processCollisionObjectMsg(collision_object_cpp);
-// }
-
 void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
                             py::object& collision_object_msg, std::optional<py::object>& color_msg)
 {
