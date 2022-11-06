@@ -52,7 +52,7 @@ void update(std::shared_ptr<moveit::core::RobotState>& robot_state, bool force, 
 
 Eigen::MatrixXd get_frame_transform(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string& frame_id);
 
-std::vector<Eigen::MatrixXd> get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state,
+Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state,
                                                        std::string& link_name);
 
 py::object get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name);

@@ -68,14 +68,11 @@ Eigen::MatrixXd get_frame_transform(std::shared_ptr<moveit::core::RobotState>& r
   return transformation.matrix();
 }
 
-std::vector<Eigen::MatrixXd> get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state,
+Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state,
                                                        std::string& link_name)
 {
   auto transformation = robot_state->getGlobalLinkTransform(link_name);
-  std::vector<Eigen::MatrixXd> transforms;
-  transforms.push_back(transformation.rotation());
-  transforms.push_back(transformation.translation());
-  return transforms;
+  return transformation.matrix();
 }
 
 py::object get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name)
