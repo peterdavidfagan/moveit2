@@ -154,22 +154,8 @@ moveit::core::RobotState& get_current_state(std::shared_ptr<planning_scene::Plan
 
 void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& robot_state)
 {
-  // py::module_ moveit_msgs = py::module::import("moveit_msgs.msg");
-  // py::object type = moveit_msgs.attr("RobotState")();
-  // if (py::isinstance(robot_state, type))
-  //{
-  //   moveit_msgs::msg::RobotState robot_state_cpp;
-  //   py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  //   py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(robot_state);
-  //   deserializeMsg(serialized_msg, robot_state_cpp);
-
-  //  planning_scene->setCurrentState(robot_state_cpp);
-  //}
-  // else
-  //{
   const moveit::core::RobotState robot_state_cpp = robot_state.cast<const moveit::core::RobotState>();
   planning_scene->setCurrentState(robot_state_cpp);
-  //}
 }
 
 void init_planning_scene(py::module& m)
