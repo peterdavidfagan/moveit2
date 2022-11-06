@@ -22,17 +22,19 @@ endfunction()
 
 pybind11_add_module(core
 	src/moveit_py/core.cpp
+	src/moveit_py/moveit_core/collision_detection/collision_common.cpp 
+	src/moveit_py/moveit_core/collision_detection/collision_matrix.cpp
+	src/moveit_py/moveit_core/planning_scene/planning_scene.cpp
+	src/moveit_py/moveit_core/transforms/transforms.cpp
 	src/moveit_py/moveit_core/robot_model/joint_model_group.cpp
 	src/moveit_py/moveit_core/robot_model/robot_model.cpp
 	src/moveit_py/moveit_core/robot_state/robot_state.cpp
 	src/moveit_py/moveit_core/robot_trajectory/robot_trajectory.cpp
-	src/moveit_py/moveit_core/collision_detection/collision_common.cpp 
-	src/moveit_py/moveit_core/collision_detection/collision_matrix.cpp
-	src/moveit_py/moveit_core/planning_scene/planning_scene.cpp
 	src/moveit_py/utils/copy_ros_msg.cpp
 	)
 target_link_libraries(core PRIVATE moveit_ros_planning::moveit_cpp
 				   rclcpp::rclcpp
+				   moveit_core::moveit_transforms
 				   moveit_core::moveit_planning_scene
 				   moveit_core::moveit_utils
 				   moveit_core::moveit_robot_model 

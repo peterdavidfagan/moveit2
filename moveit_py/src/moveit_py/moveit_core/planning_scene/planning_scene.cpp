@@ -212,7 +212,7 @@ void init_planning_scene(py::module& m)
       .def_property("planning_scene_message", &moveit_py::bind_planning_scene::get_planning_scene_msg, nullptr,
                     py::return_value_policy::move)
       // TODO (peterdavidfagan): requires binding of transform object.
-      //.def_property("transforms", &planning_scene::PlanningScene::getTransforms, nullptr)
+      .def_property("transforms", py::overload_cast<>(&planning_scene::PlanningScene::getTransforms), nullptr)
 
       // methods
       .def("knows_frame_transform",
