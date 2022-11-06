@@ -59,7 +59,7 @@ void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& plan
 
   // apply collision object
   planning_scene->processCollisionObjectMsg(collision_object_cpp);
-  
+
   // check if color message is provided
   if (color_msg.has_value())
   {
@@ -140,17 +140,6 @@ moveit::core::RobotState& get_current_state(std::shared_ptr<planning_scene::Plan
 {
   return planning_scene->getCurrentStateNonConst();
 }
-
-// moveit::core::RobotStatePtr get_current_state_updated(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-//                                                       py::object update)
-//{
-//   moveit_msgs::msg::RobotState robot_state_cpp;
-//   py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-//   py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(update);
-//   deserializeMsg(serialized_msg, robot_state_cpp);
-//
-//   return planning_scene->getCurrentStateUpdated(robot_state_cpp);
-// }
 
 void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& robot_state)
 {
