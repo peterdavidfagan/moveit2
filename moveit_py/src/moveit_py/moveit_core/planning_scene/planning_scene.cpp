@@ -147,6 +147,16 @@ void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_
   planning_scene->setCurrentState(robot_state_cpp);
 }
 
+void set_object_color(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, const std::string& id,
+                      py::object& color)
+{
+  std_msgs::msg::ColorRGBA color_cpp;
+  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
+  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(color);
+  deserializeMsg(serialized_msg, color_cpp);
+  planning_scene->setObjectColor(id, color_cpp);
+}
+
 void init_planning_scene(py::module& m)
 {
   py::class_<planning_scene::PlanningScene, std::shared_ptr<planning_scene::PlanningScene>>(m, "PlanningScene",
@@ -180,7 +190,7 @@ void init_planning_scene(py::module& m)
 
       .def_property("planning_scene_message", &moveit_py::bind_planning_scene::get_planning_scene_msg, nullptr,
                     py::return_value_policy::move)
-      // TODO (peterdavidfagan): requires binding of transform object.
+      
       .def_property("transforms", py::overload_cast<>(&planning_scene::PlanningScene::getTransforms), nullptr)
 
       // methods
@@ -221,17 +231,6 @@ void init_planning_scene(py::module& m)
                :py:class:`numpy.ndarray`: The transform corresponding to the frame id.
            )")
 
-      //.def("get_current_state_updated", &moveit_py::bind_planning_scene::get_current_state_updated, py::arg("update"),
-      //     R"(
-      //     Get a copy of the current state with components overwritten by the state message update.
-      //
-      //     Args:
-      //         update (:py:class:`moveit_msgs.msg.RobotState`): The update to apply to the current state.
-      //
-      //     Returns:
-      //         :py:class:`moveit_py.core.RobotState`: The current robot state after applying the update.
-      //      )")
-
       // writing to the planning scene
       .def("apply_planning_scene_world", &moveit_py::bind_planning_scene::apply_planning_scene_world, py::arg("scene"),
            R"(
@@ -239,14 +238,6 @@ void init_planning_scene(py::module& m)
            Args:
                scene (:py:class:`moveit_msgs.msg.PlanningSceneWorld`): The planning scene world message to apply.
        )")
-
-      //.def("apply_collision_object", py::overload_cast<std::shared_ptr<planning_scene::PlanningScene>&,
-      // py::object&>(&moveit_py::bind_planning_scene::apply_collision_object), py::arg("object"), R"( Apply
-      // a collision object to the planning scene.
-      //
-      // Args:
-      //    object (moveit_msgs.msg.CollisionObject): The collision object to apply to the planning scene.
-      //)")
 
       .def("apply_collision_object", &moveit_py::bind_planning_scene::apply_collision_object,
            py::arg("collision_object_msg"), py::arg("color_msg") = py::none(),
@@ -256,6 +247,14 @@ void init_planning_scene(py::module& m)
                object (moveit_msgs.msg.CollisionObject): The collision object to apply to the planning scene.
            color (moveit_msgs.msg.ObjectColor, optional): The color of the collision object. Defaults to None if not specified.
            )")
+
+      .def("set_object_color", &moveit_py::bind_planning_scene::set_object_color, py::arg("object_id"),
+           py::arg("color_msg"), R"(
+	   Set the color of a collision object.
+	   Args:
+	       object_id (str): The id of the collision object to set the color of.
+	       color (std_msgs.msg.ObjectColor): The color of the collision object.
+	   )")
 
       .def("apply_attached_collision_object", &moveit_py::bind_planning_scene::apply_attached_collision_object,
            py::arg("object"),

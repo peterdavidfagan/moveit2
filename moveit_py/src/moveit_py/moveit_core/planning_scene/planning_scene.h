@@ -50,14 +50,12 @@ namespace bind_planning_scene
 void apply_planning_scene_world(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
                                 py::object& planning_scene_world_msg);
 
-// void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-//                             py::object& collision_object);
-
 void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
                             py::object& collision_object_msg, std::optional<py::object>& color_msg);
 
-// void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object&
-// collision_object_msg, py::object& color_msg);
+
+void set_object_color(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, const std::string& id,
+                      py::object& color);
 
 void apply_attached_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
                                      py::object& attached_collision_object);
@@ -81,9 +79,6 @@ bool is_state_constrained(std::shared_ptr<planning_scene::PlanningScene>& planni
                           const moveit::core::RobotState& robot_state, py::object constraints, bool verbose);
 
 moveit::core::RobotState& get_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene);
-
-// moveit::core::RobotStatePtr get_current_state_updated(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-//                                                       py::object update);
 
 void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& robot_state);
 
