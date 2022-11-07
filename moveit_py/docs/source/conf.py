@@ -37,7 +37,7 @@ extensions = [
 
 intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable/", None),
-    "geometry_msgs": ("http://docs.ros.org/en/noetic/api/geometry_msgs/html/", None), # consider updating
+    "geometry_msgs": ("http://docs.ros.org/en/latest/api/geometry_msgs/html/", None),
 }
 autodoc_typehints = 'signature'
 
