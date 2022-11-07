@@ -129,7 +129,7 @@ class PS4DualShockTeleop(TeleopDevice):
             roll_negative = -1 * data.buttons[self.device_config.Buttons.L1]
             twist.twist.angular.z = float(roll_positive + roll_negative)
 
-            twist.header.frame_id = "panda_hand"
+            twist.header.frame_id = self.get_parameter("eef_frame_name").value # get ros2 frame name from node parameters
             twist.header.stamp = self.get_clock().now().to_msg()
             self.twist_publisher.publish(twist)
 
@@ -137,3 +137,5 @@ class PS4DualShockTeleop(TeleopDevice):
             self.logger.info.error(e)
             print(e)
 
+    def record():
+        pass
