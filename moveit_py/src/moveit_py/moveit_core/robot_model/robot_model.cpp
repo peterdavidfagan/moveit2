@@ -51,7 +51,7 @@ void init_robot_model(py::module& m)
                                                                                   R"(
           Representation of a kinematic model.
           )")
-
+      // TODO (peterdavidfagan): rewrite with RobotModelLoader.
       .def(py::init([](std::string& urdf_xml_path, std::string& srdf_xml_path) {
              // Read in URDF
              std::string xml_string;
