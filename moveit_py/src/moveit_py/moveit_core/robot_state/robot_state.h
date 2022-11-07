@@ -37,6 +37,8 @@
 #pragma once
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
 #include <copy_ros_msg.h>
 #include <serialize_ros_msg.h>
 #include <tf2_eigen/tf2_eigen.hpp>
