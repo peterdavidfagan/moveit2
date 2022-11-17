@@ -37,6 +37,8 @@
 #pragma once
 
 #include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/stl.h>
 #include <copy_ros_msg.h>
 #include <serialize_ros_msg.h>
 #include <moveit/planning_scene/planning_scene.h>
