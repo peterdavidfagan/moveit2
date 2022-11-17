@@ -162,50 +162,6 @@ void init_plan_solution(py::module& m)
           )");
 }
 
-void init_planning_component_context_manager(py::module& m)
-{
-  // In Python we lock the planning scene using a with statement as this allows us to have control over resources.
-  // To this end each of the below manager classes binds special methods __enter__ and __exit__.
-  // LockedPlanningSceneContextManagerRO
-  py::class_<moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRO>(
-      m, "LockedPlanningSceneContextManagerRO", R"(
-      A context manager that locks the planning scene for reading.
-      )")
-
-      .def("__enter__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRO::locked_planning_scene_ro_enter_,
-           R"(
-           Special method that is used with the with statement, provides access to a locked plannning scene instance.
-           Returns:
-               :py:class:`moveit_py.core.PlanningScene`: The locked planning scene.
-        )")
-      .def("__exit__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRO::locked_planning_scene_ro_exit_,
-           R"(
-           Special method that is used with the with statement, releases the lock on the planning scene.
-           )");
-
-  // LockedPlanningSceneContextManagerRW
-  py::class_<moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRW>(
-      m, "LockedPlanningSceneContextManagerRW", R"(
-      A context manager that locks the planning scene for reading and writing.
-      )")
-
-      .def("__enter__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRW::locked_planning_scene_rw_enter_,
-           R"(
-           Special method that is used with the with statement, provides access to a locked plannning scene instance.
-           Returns:
-               :py:class:`moveit_py.core.PlanningScene`: The locked planning scene.
-           )")
-
-      .def("__exit__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRW::locked_planning_scene_rw_exit_,
-           R"(
-           Special method that is used with the with statement, releases the lock on the planning scene.
-           )");
-}
-
 void init_planning_component(py::module& m)
 {
   py::class_<moveit_cpp::PlanningComponent, std::shared_ptr<moveit_cpp::PlanningComponent>>(m, "PlanningComponent",

@@ -240,7 +240,7 @@ void init_planning_scene(py::module& m)
        )")
 
       .def("apply_collision_object", &moveit_py::bind_planning_scene::apply_collision_object,
-           py::arg("collision_object_msg"), py::arg("color_msg") = py::none(),
+           py::arg("collision_object_msg"), py::arg("color_msg").none(true) = py::none(),
            R"(
            Apply a collision object to the planning scene.
            Args:

@@ -36,7 +36,6 @@
 
 #pragma once
 
-
 #include <pybind11/pybind11.h>
 #include <copy_ros_msg.h>
 #include <serialize_ros_msg.h>
@@ -56,12 +55,12 @@ class LockedPlanningSceneContextManagerRW
 {
 public:
   const planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
-  const planning_scene_monitor::LockedPlanningSceneRW* ls_rw_;
+  std::unique_ptr<const planning_scene_monitor::LockedPlanningSceneRW> ls_rw_;
 
-  LockedPlanningSceneContextManagerRW(const planning_scene_monitor::PlanningSceneMonitorPtr& psm,
-                                      const planning_scene_monitor::LockedPlanningSceneRW* ls_rw)
-    : planning_scene_monitor_(psm), ls_rw_(ls_rw)
+  LockedPlanningSceneContextManagerRW(const planning_scene_monitor::PlanningSceneMonitorPtr& psm)
+    : planning_scene_monitor_(psm)
   {
+    ls_rw_ = std::make_unique<const planning_scene_monitor::LockedPlanningSceneRW>(planning_scene_monitor_);
   }
 
   const planning_scene::PlanningScenePtr& locked_planning_scene_rw_enter_();
@@ -73,39 +72,18 @@ class LockedPlanningSceneContextManagerRO
 {
 public:
   const planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
-  const planning_scene_monitor::LockedPlanningSceneRO* ls_ro_;
+  std::unique_ptr<const planning_scene_monitor::LockedPlanningSceneRO> ls_ro_;
 
-  LockedPlanningSceneContextManagerRO(const planning_scene_monitor::PlanningSceneMonitorPtr& psm,
-                                      const planning_scene_monitor::LockedPlanningSceneRO* ls_ro)
-    : planning_scene_monitor_(psm), ls_ro_(ls_ro)
+  LockedPlanningSceneContextManagerRO(const planning_scene_monitor::PlanningSceneMonitorPtr& psm)
+    : planning_scene_monitor_(psm)
   {
+    ls_ro_ = std::make_unique<const planning_scene_monitor::LockedPlanningSceneRO>(planning_scene_monitor_);
   }
 
   const planning_scene::PlanningSceneConstPtr& locked_planning_scene_ro_enter_() const;
 
   void locked_planning_scene_ro_exit_(const py::object& type, const py::object& value, const py::object& traceback);
 };
-
-// class LockedPlanningSceneContextManager
-//{
-// public:
-//   const planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
-//   const planning_scene_monitor::LockedPlanningSceneRO* ls_ro_;
-//   const planning_scene_monitor::LockedPlanningSceneRW* ls_rw_;
-//   bool read_only_;
-
-//  LockedPlanningSceneContextManager(const planning_scene_monitor::PlanningSceneMonitorPtr& psm,
-//                                    const planning_scene_monitor::LockedPlanningSceneRO* ls_ro, bool read_only)
-//    : planning_scene_monitor_(psm), ls_ro_(ls_ro), ls_rw_(nullptr), read_only_(read_only)
-//  {
-//  }
-
-//  LockedPlanningSceneContextManager(const planning_scene_monitor::PlanningSceneMonitorPtr& psm,
-//                                    const planning_scene_monitor::LockedPlanningSceneRW* ls_rw, bool read_only)
-//    : planning_scene_monitor_(psm), ls_ro_(nullptr), ls_rw_(ls_rw), read_only_(read_only)
-//  {
-//  }
-//};
 
 LockedPlanningSceneContextManagerRW
 read_write(const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_monitor);
@@ -121,6 +99,8 @@ read_only(const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_
 void apply_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>& planning_scene_monitor,
                           py::object& planning_scene);
 
-void init_planning_scene_monitor(py::module &m);
+void init_planning_scene_monitor(py::module& m);
+
+void init_context_managers(py::module& m);
 }  // namespace bind_planning_scene_monitor
 }  // namespace moveit_py

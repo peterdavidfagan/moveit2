@@ -49,8 +49,8 @@ PYBIND11_MODULE(planning, m)
   // Construct module classes
   moveit_py::bind_planning_component::init_plan_request_parameters(m);
   moveit_py::bind_planning_component::init_plan_solution(m);
-  moveit_py::bind_planning_component::init_planning_component_context_manager(m);
   moveit_py::bind_planning_component::init_planning_component(m);
   moveit_py::bind_planning_scene_monitor::init_planning_scene_monitor(m);
+  moveit_py::bind_planning_scene_monitor::init_context_managers(m);
   moveit_py::bind_moveit_cpp::init_moveit_py(m);
 }

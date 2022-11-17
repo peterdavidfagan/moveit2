@@ -67,8 +67,6 @@ void init_plan_request_parameters(py::module &m);
 
 void init_plan_solution(py::module &m);
 
-void init_planning_component_context_manager(py::module &m);
-
 void init_planning_component(py::module &m);
 }  // namespace bind_planning_component
 }  // namespace moveit_py
