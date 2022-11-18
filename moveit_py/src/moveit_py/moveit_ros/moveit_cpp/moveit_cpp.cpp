@@ -121,19 +121,26 @@ void init_moveit_py(py::module& m)
                // TODO (peterdavidfagan): consider failing initialization if no params file is provided
                node_options.allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true);
              }
-             RCLCPP_INFO(LOGGER, "Initialize node");
+             RCLCPP_INFO(LOGGER, "Initialize node and executor");
              rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared(node_name, "", node_options);
+             std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor =
+                 std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
              RCLCPP_INFO(LOGGER, "Spin separate thread");
-             auto spin_node = [&node]() {
-               rclcpp::executors::SingleThreadedExecutor executor;
-               executor.add_node(node);
-               executor.spin();
+             auto spin_node = [node, executor]() {
+               executor->add_node(node);
+               executor->spin();
              };
              std::thread execution_thread(spin_node);
              execution_thread.detach();
 
-             std::shared_ptr<moveit_cpp::MoveItCpp> moveit_cpp_ptr = std::make_shared<moveit_cpp::MoveItCpp>(node);
+             auto custom_deleter = [executor](moveit_cpp::MoveItCpp* moveit_cpp) {
+               executor->cancel();
+               rclcpp::shutdown();
+               delete moveit_cpp;
+             };
+
+             std::shared_ptr<moveit_cpp::MoveItCpp> moveit_cpp_ptr(new moveit_cpp::MoveItCpp(node), custom_deleter);
 
              if (provide_planning_service)
              {
@@ -145,7 +152,7 @@ void init_moveit_py(py::module& m)
            py::arg("node_name") = "moveit_py",
            py::arg("launch_params_filepath") = utils.attr("get_launch_params_filepath")().cast<std::string>(),
            py::arg("config_dict") = py::none(), py::arg("provide_planning_service") = true,
-           py::return_value_policy::reference,
+           py::return_value_policy::take_ownership,
            R"(
            Initialize moveit_cpp node and the planning scene service. 
            )")
