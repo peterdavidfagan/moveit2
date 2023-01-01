@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik Inc. nor the names of its
+ *   * Neither the name of PickNik Inc. nor te names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -34,23 +34,34 @@
 
 /* Author: Peter David Fagan */
 
-#include "moveit_ros/moveit_cpp/moveit_cpp.h"
-#include "moveit_ros/moveit_cpp/planning_component.h"
-#include "moveit_ros/planning_scene_monitor/planning_scene_monitor.h"
+#pragma once
 
-PYBIND11_MODULE(planning, m)
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/stl.h>
+#include <moveit_msgs/msg/robot_state.h>
+#include <moveit_msgs/msg/move_it_error_codes.h>
+#include <serialize_ros_msg.h>
+#include <moveit/planning_interface/planning_response.h>
+
+namespace py = pybind11;
+
+namespace moveit_py
 {
-  m.doc() = "Python bindings for moveit_cpp functionalities.";
+namespace bind_planning_interface
+{
 
-  // Provide custom function signatures
-  py::options options;
-  options.disable_function_signatures();
+std::shared_ptr<robot_trajectory::RobotTrajectory>
+get_motion_plan_response_trajectory(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
 
-  // Construct module classes
-  moveit_py::bind_planning_component::init_plan_request_parameters(m);
-  moveit_py::bind_planning_component::init_multi_plan_request_parameters(m);
-  moveit_py::bind_planning_component::init_planning_component(m);
-  moveit_py::bind_planning_scene_monitor::init_planning_scene_monitor(m);
-  moveit_py::bind_planning_scene_monitor::init_context_managers(m);
-  moveit_py::bind_moveit_cpp::init_moveit_py(m);
-}
+py::object get_motion_plan_response_start_state(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
+
+py::object get_motion_plan_response_error_code(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
+
+double get_motion_plan_response_planning_time(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
+
+std::string get_motion_plan_response_planner_id(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
+
+void init_motion_plan_response(py::module& m);
+}  // namespace bind_planning_interface
+}  // namespace moveit_py

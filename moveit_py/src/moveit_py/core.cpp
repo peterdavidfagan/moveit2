@@ -40,6 +40,7 @@
 #include "moveit_core/robot_trajectory/robot_trajectory.h"
 #include "moveit_core/collision_detection/collision_common.h"
 #include "moveit_core/collision_detection/collision_matrix.h"
+#include "moveit_core/planning_interface/planning_response.h"
 #include "moveit_core/planning_scene/planning_scene.h"
 
 PYBIND11_MODULE(core, m)
@@ -61,6 +62,7 @@ PYBIND11_MODULE(core, m)
   moveit_py::bind_collision_detection::init_collision_result(m);
   moveit_py::bind_collision_detection::init_acm(m);
   moveit_py::bind_planning_scene::init_planning_scene(m);
+  moveit_py::bind_planning_interface::init_motion_plan_response(m);
 
   // TODO (peterdavidfagan): complete LinkModel bindings
   // LinkModel

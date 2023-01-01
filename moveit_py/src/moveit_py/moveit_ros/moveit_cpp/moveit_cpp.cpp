@@ -47,37 +47,6 @@ get_planning_component(std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp_ptr, s
   return std::make_shared<moveit_cpp::PlanningComponent>(planning_component, moveit_cpp_ptr);
 }
 
-py::object get_plan_solution_start_state(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution)
-{
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::module_ moveit_msgs = py::module::import("moveit_msgs.msg");
-
-  py::object robot_state = moveit_msgs.attr("RobotState")();
-  moveit_msgs::msg::RobotState robot_state_cpp = plan_solution->start_state;
-  py::bytes serialized_msg = serializeMsg(robot_state_cpp);
-  rclpy_serialization.attr("deserialize_message")(serialized_msg, robot_state);
-  return robot_state;
-}
-
-std::shared_ptr<robot_trajectory::RobotTrajectory>
-get_plan_solution_trajectory(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution)
-{
-  return plan_solution->trajectory;
-}
-
-py::object get_plan_solution_error_code(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution)
-{
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::module_ moveit_msgs = py::module::import("moveit_msgs.msg");
-
-  py::object moveit_error_codes = moveit_msgs.attr("MoveItErrorCodes")();
-  moveit_msgs::msg::MoveItErrorCodes error_codes_cpp =
-      static_cast<moveit_msgs::msg::MoveItErrorCodes>(plan_solution->error_code);
-  py::bytes serialized_msg = serializeMsg(error_codes_cpp);
-  rclpy_serialization.attr("deserialize_message")(serialized_msg, moveit_error_codes);
-  return moveit_error_codes;
-}
-
 void init_moveit_py(py::module& m)
 {
   auto utils = py::module::import("moveit_py.utils");
@@ -166,16 +135,6 @@ void init_moveit_py(py::module& m)
            Returns:
                :py:class:`moveit_py.planning.PlanningComponent`: A planning component instance corresponding to the provided plan component name.
           )")
-
-      .def("get_planning_pipeline_names", &moveit_cpp::MoveItCpp::getPlanningPipelineNames,
-           py::arg("joint_model_group_name"), py::return_value_policy::move,
-           R"(
-           Return list of planning pipeline names for the provided joint model group name.
-           Args:
-               joint_model_group_name (str): The name of the joint model group.
-           Returns:
-               list of str: List of planning pipeline names.
-        )")
 
       .def(
           "shutdown", [](std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp) { rclcpp::shutdown(); },

@@ -35,11 +35,74 @@
 /* Author: Peter David Fagan */
 
 #include "planning_component.h"
+#include <pybind11/functional.h>
+#include <memory>
 
 namespace moveit_py
 {
 namespace bind_planning_component
 {
+
+// planning_interface::MotionPlanResponse
+// plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
+//      std::shared_ptr<moveit_cpp::PlanningComponent::PlanRequestParameters>& single_plan_parameters,
+//      std::shared_ptr<moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters>& multi_plan_parameters)
+//{
+//   return planning_component->plan();
+// }
+
+planning_interface::MotionPlanResponse
+plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
+     std::shared_ptr<moveit_cpp::PlanningComponent::PlanRequestParameters>& single_plan_parameters,
+     std::shared_ptr<moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters>& multi_plan_parameters,
+     std::optional<const moveit_cpp::PlanningComponent::SolutionCallbackFunction> solution_selection_callback,
+     std::optional<moveit_cpp::PlanningComponent::StoppingCriterionFunction> stopping_criterion_callback)
+{
+  //  check whether single or multi pipeline
+  if (single_plan_parameters)
+  {
+    // single pipeline
+    // for now we assume storing of result
+
+    // cast parameters
+    std::shared_ptr<const moveit_cpp::PlanningComponent::PlanRequestParameters> const_single_plan_parameters =
+        std::const_pointer_cast<const moveit_cpp::PlanningComponent::PlanRequestParameters>(single_plan_parameters);
+    return planning_component->plan(*const_single_plan_parameters);
+  }
+  else if (multi_plan_parameters)
+  {
+    // multi pipeline
+
+    // cast parameters
+    std::shared_ptr<const moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters> const_multi_plan_parameters =
+        std::const_pointer_cast<const moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters>(
+            multi_plan_parameters);
+
+    if (solution_selection_callback && stopping_criterion_callback)
+    {
+      return planning_component->plan(*const_multi_plan_parameters, std::ref(*solution_selection_callback),
+                                      *stopping_criterion_callback);
+    }
+    else if (solution_selection_callback)
+    {
+      return planning_component->plan(*const_multi_plan_parameters, std::ref(*solution_selection_callback));
+    }
+    else if (solution_selection_callback)
+    {
+      return planning_component->plan(*const_multi_plan_parameters, moveit_cpp::getShortestSolution,
+                                      *stopping_criterion_callback);
+    }
+    else
+    {
+      return planning_component->plan(*const_multi_plan_parameters);
+    }
+  }
+  else
+  {
+    return planning_component->plan();
+  }
+}
+
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component, py::object& pose_stamped,
               std::string link_name)
 {
@@ -97,8 +160,12 @@ void init_plan_request_parameters(py::module& m)
                                                                                     R"(
 			     Planner parameters provided with a MotionPlanRequest.
 			     )")
-
-      .def(py::init<>())
+      .def(py::init([](std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp, std::string ns) {
+        const rclcpp::Node::SharedPtr& node = moveit_cpp->getNode();
+        moveit_cpp::PlanningComponent::PlanRequestParameters params;
+        params.load(node, ns);
+        return params;
+      }))
       .def_readwrite("planner_id", &moveit_cpp::PlanningComponent::PlanRequestParameters::planner_id,
                      R"(
                      str: The planner id to use.
@@ -127,41 +194,23 @@ void init_plan_request_parameters(py::module& m)
                      )");
 }
 
-void init_plan_solution(py::module& m)
+void init_multi_plan_request_parameters(py::module& m)
 {
-  py::class_<moveit_cpp::PlanningComponent::PlanSolution, std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>>(
-      m, "PlanSolution", R"( 
-      Representation of a plan solution.
-      )")
-
-      .def(py::init<>())
-      .def_property("start_state", &moveit_py::bind_moveit_cpp::get_plan_solution_start_state, nullptr,
-                    py::return_value_policy::copy,
-                    R"(
-                    moveit_msgs.msg.RobotState: The start state of the plan.
-                    )")
-      .def_property("trajectory", &moveit_py::bind_moveit_cpp::get_plan_solution_trajectory, nullptr,
-                    py::return_value_policy::copy,
-                    R"(
-                    :py:class:`moveit_py.core.RobotTrajectory`: The trajectory of the plan.
-                    )")
-
-      // TODO (peterdavidfagan): Add bindings for error codes.
-      .def_property("error_code", &moveit_py::bind_moveit_cpp::get_plan_solution_error_code, nullptr,
-                    py::return_value_policy::copy,
-                    R"(
-                    moveit_py.core.ErrorCode: The reason why the plan failed.
-                    )")
-      .def(
-          "__bool__",
-          [](moveit_cpp::PlanningComponent::PlanSolution& plan_solution) { return bool(plan_solution.error_code); },
-          py::is_operator(),
-          R"(
-          Returns:
-              bool: True if the plan succeeded otherwise false.
-          )");
+  py::class_<moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters,
+             std::shared_ptr<moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters>>(
+      m, "MultiPipelinePlanRequestParameters",
+      R"(
+			     Planner parameters provided with a MotionPlanRequest.
+			     )")
+      .def(py::init([](std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp,
+                       const std::vector<std::string> planning_pipeline_names) {
+        const rclcpp::Node::SharedPtr& node = moveit_cpp->getNode();
+        moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters params{ node, planning_pipeline_names };
+        return params;
+      }))
+      .def_readonly("multi_plan_request_parameters",
+                    &moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters::multi_plan_request_parameters);
 }
-
 void init_planning_component(py::module& m)
 {
   py::class_<moveit_cpp::PlanningComponent, std::shared_ptr<moveit_cpp::PlanningComponent>>(m, "PlanningComponent",
@@ -274,22 +323,16 @@ void init_planning_component(py::module& m)
         )")
 
       // plan/execution methods
-      .def("plan", py::overload_cast<>(&moveit_cpp::PlanningComponent::plan), py::return_value_policy::move,
-           R"(
-           Run a plan from start or current state to fulfill the last goal constraints provided by the set_goal method using default parameters.
-           Returns:
-               :py:class:`moveit_py.planning.PlanSolution`: The plan solution.
-        )")
 
-      .def("plan",
-           py::overload_cast<const moveit_cpp::PlanningComponent::PlanRequestParameters&>(
-               &moveit_cpp::PlanningComponent::plan),
-           py::return_value_policy::move,
+      // TODO (peterdavidfagan): improve the plan API
+      .def("plan", &moveit_py::bind_planning_component::plan, py::arg("single_plan_parameters") = nullptr,
+           py::arg("multi_plan_parameters") = nullptr, py::arg("solution_selection_callback") = nullptr,
+           py::arg("stopping_criterion_callback") = nullptr, py::return_value_policy::move,
            R"(
-           Run a plan from start or current state to fulfill the last goal constraints provided by the set_goal method using the provided :py:class:`moveit_py.planning.PlanRequestParameters`.
-           Args:
-               parameters (:py:class:`moveit_py.planning.PlanRequestParameters`): The parameters to use for the plan.
-        )")
+      	   Plan a motion plan using the current start and goal states.
+      	   Args:
+      	       plan_parameters (moveit_py.core.PlanParameters): The parameters to use for planning.
+      	   )")
 
       .def("set_path_constraints", &moveit_py::bind_planning_component::set_path_constraints,
            py::arg("path_constraints"), py::return_value_policy::move,

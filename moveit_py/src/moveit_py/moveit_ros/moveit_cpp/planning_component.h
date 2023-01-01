@@ -37,14 +37,18 @@
 #pragma once
 
 #include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include <copy_ros_msg.h>
 #include <serialize_ros_msg.h>
 #include <moveit/moveit_cpp/moveit_cpp.h>
 #include <moveit/moveit_cpp/planning_component.h>
+#include <moveit/moveit_cpp/plan_solutions.h>
 
 #include "moveit_cpp.h"
 #include "../planning_scene_monitor/planning_scene_monitor.h"
+#include "../../moveit_core/planning_interface/planning_response.h"
 
 namespace py = pybind11;
 
@@ -52,6 +56,19 @@ namespace moveit_py
 {
 namespace bind_planning_component
 {
+
+// planning_interface::MotionPlanResponse
+// plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
+//      std::shared_ptr<moveit_cpp::PlanningComponent::PlanRequestParameters>& single_plan_parameters,
+//      std::shared_ptr<moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters>& multi_plan_parameters);
+
+planning_interface::MotionPlanResponse
+plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
+     std::shared_ptr<moveit_cpp::PlanningComponent::PlanRequestParameters>& single_plan_parameters,
+     std::shared_ptr<moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters>& multi_plan_parameters,
+     std::optional<const moveit_cpp::PlanningComponent::SolutionCallbackFunction> solution_selection_callback,
+     std::optional<moveit_cpp::PlanningComponent::StoppingCriterionFunction> stopping_criterion_callback);
+
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_components, py::object& pose_stamped,
               std::string link_name);
 
@@ -63,10 +80,10 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
 bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
                           py::object path_constraints);
 
-void init_plan_request_parameters(py::module &m);
+void init_plan_request_parameters(py::module& m);
 
-void init_plan_solution(py::module &m);
+void init_multi_plan_request_parameters(py::module& m);
 
-void init_planning_component(py::module &m);
+void init_planning_component(py::module& m);
 }  // namespace bind_planning_component
 }  // namespace moveit_py

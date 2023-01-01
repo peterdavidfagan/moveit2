@@ -57,14 +57,6 @@ namespace bind_moveit_cpp
 {
 std::shared_ptr<moveit_cpp::PlanningComponent>
 get_planning_component(std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp_ptr, std::string planning_component);
-
-py::object get_plan_solution_start_state(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution);
-
-std::shared_ptr<robot_trajectory::RobotTrajectory>
-get_plan_solution_trajectory(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution);
-
-py::object get_plan_solution_error_code(std::shared_ptr<moveit_cpp::PlanningComponent::PlanSolution>& plan_solution);
-
 void init_moveit_py(py::module &m);
 }  // namespace bind_moveit_cpp
 }  // namespace moveit_py
