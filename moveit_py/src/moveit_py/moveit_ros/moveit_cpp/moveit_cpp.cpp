@@ -71,7 +71,6 @@ void init_moveit_py(py::module& m)
              if (!config_dict.is(py::none()))
              {
                // TODO (peterdavidfagan): replace python method with C++ method
-               auto utils = py::module::import("moveit_py.utils");
                std::string params_filepath =
                    utils.attr("create_params_file_from_dict")(config_dict, "moveit_py").cast<std::string>();
                RCLCPP_INFO(LOGGER, "params_filepath: %s", params_filepath.c_str());

@@ -55,5 +55,4 @@ def get_launch_params_filepath():
         cli_args = sys.argv
         return sys.argv[sys.argv.index("--params-file") + 1]
     except:
-        print("Failed to read parameter file from command line arguments.")
         return ""
