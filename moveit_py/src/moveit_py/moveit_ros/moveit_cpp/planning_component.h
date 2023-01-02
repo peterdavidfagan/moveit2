@@ -67,6 +67,10 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
               std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state,
               std::optional<py::dict> pose_goal, std::optional<py::list> motion_plan_constraints);
 
+bool set_start_state(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
+                     std::optional<std::string> configuration_name,
+                     std::optional<moveit::core::RobotState> robot_state);
+
 bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
                           py::object path_constraints);
 

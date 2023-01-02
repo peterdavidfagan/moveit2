@@ -153,7 +153,7 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
       std::string link_name = py::cast<std::string>(pose_dict["link_name"]);
       if (py::isinstance<py::array_t<double>>(pose_dict["pose"]))
       {
-	py::array_t<double> pose_array = pose_dict["pose"].cast<py::array_t<double>>();
+        py::array_t<double> pose_array = pose_dict["pose"].cast<py::array_t<double>>();
 
         py::buffer_info buf = pose_array.request();
         double* ptr = (double*)buf.ptr;
@@ -194,6 +194,33 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
 
     // set the goal using planning component
     return planning_component->setGoal(constraints_vec_cpp);
+  }
+}
+
+bool set_start_state(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
+                     std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state)
+{
+  // check that no more than one argument is specified
+  if (configuration_name && robot_state)
+  {
+    throw std::invalid_argument("Cannot specify both configuration name and robot state");
+  }
+
+  // check that at least one argument is specified
+  if (!configuration_name && !robot_state)
+  {
+    throw std::invalid_argument("Must specify at least one argument");
+  }
+
+  // 1. set start state from configuration name
+  if (configuration_name)
+  {
+    return planning_component->setStartState(*configuration_name);
+  }
+  // 2. set start state from robot_state
+  else
+  {
+    return planning_component->setStartState(*robot_state);
   }
 }
 
@@ -305,22 +332,14 @@ void init_planning_component(py::module& m)
            Set the start state of the plan to the current state of the robot. 
            )")
 
-      .def("set_start_state", py::overload_cast<const std::string&>(&moveit_cpp::PlanningComponent::setStartState),
-           py::arg("start_state_name"), py::return_value_policy::move,
+      .def("set_start_state", &moveit_py::bind_planning_component::set_start_state,
+           py::arg("configuration_name") = nullptr, py::arg("robot_state") = nullptr,
            R"(
-           Set the start state to a predefined state from the robot srdf.
-           Args:
-               start_state_name (str):
-           )")
-
-      .def("set_start_state",
-           py::overload_cast<const moveit::core::RobotState&>(&moveit_cpp::PlanningComponent::setStartState),
-           py::arg("start_state"), py::return_value_policy::move,
-           R"(
-           Set the start state to a given RobotState.
-           Args:
-               start_state (moveit_py.core.RobotState): The state to set the start state to.
-           )")
+	   Set the start state of the plan to the given robot state. 
+	   Args:
+	       configuration_name (str): The name of the configuration to use as the start state.
+	       robot_state (:py:class:`moveit_msgs.msg.RobotState`): The robot state to use as the start state.
+	   )")
 
       .def("get_start_state", &moveit_cpp::PlanningComponent::getStartState,
            py::return_value_policy::reference_internal,
