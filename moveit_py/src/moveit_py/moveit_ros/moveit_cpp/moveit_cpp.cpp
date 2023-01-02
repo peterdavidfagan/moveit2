@@ -70,6 +70,7 @@ void init_moveit_py(py::module& m)
              // and finally no supplied parameters.
              if (!config_dict.is(py::none()))
              {
+               auto utils = py::module::import("moveit_py.utils");
                // TODO (peterdavidfagan): replace python method with C++ method
                std::string params_filepath =
                    utils.attr("create_params_file_from_dict")(config_dict, "moveit_py").cast<std::string>();
