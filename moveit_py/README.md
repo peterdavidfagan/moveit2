@@ -25,4 +25,4 @@ Community contributions are welcome.
 For detailed contribution guidelines please consult the official [Moveit contribution guidelines](https://moveit.ros.org/documentation/contributing/).
 
 ## Acknowledgements
-Thank you to the [Google Summer of Code program](https://summerofcode.withgoogle.com/) for sponsoring the initial development of this Python library. 
+Thank you to the [Google Summer of Code program](https://summerofcode.withgoogle.com/) for sponsoring the development of this Python library. Thank you to the MoveIt maintainers Henning Kayser (@henningkayser) and Michael Gorner (@v4hn) for their guidance as supervisors of my GSoC project. Finally thank you to the [ML Collective](https://mlcollective.org/) for providing compute support for this project. 
