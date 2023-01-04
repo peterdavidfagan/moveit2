@@ -92,24 +92,12 @@ py::dict get_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_st
   return joint_positions;
 }
 
-void set_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state, py::object& joint_positions)
+void set_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_positions)
 {
-  if (py::isinstance<py::tuple>(joint_positions))
+  auto joint_positions_cpp = joint_positions.cast<std::map<std::string, double>>();
+  for (auto item : joint_positions_cpp)
   {
-    auto joint_positions_cpp = joint_positions.cast<std::pair<std::string, std::vector<double>>>();
-    robot_state->setJointGroupPositions(joint_positions_cpp.first, joint_positions_cpp.second);
-  }
-  else if (py::isinstance<py::dict>(joint_positions))
-  {
-    auto joint_positions_cpp = joint_positions.cast<std::map<std::string, double>>();
-    for (auto item : joint_positions_cpp)
-    {
-      robot_state->setVariablePosition(item.first, item.second);
-    }
-  }
-  else
-  {
-    throw std::invalid_argument("Invalid joint_positions type");
+    robot_state->setVariablePosition(item.first, item.second);
   }
 }
 
@@ -124,25 +112,13 @@ py::dict get_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_s
   return joint_velocity;
 }
 
-void set_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state, py::object& joint_velocities)
+void set_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_velocities)
 {
-  if (py::isinstance<py::tuple>(joint_velocities))
-  {
-    auto joint_velocities_cpp = joint_velocities.cast<std::pair<std::string, std::vector<double>>>();
-    robot_state->setJointGroupVelocities(joint_velocities_cpp.first, joint_velocities_cpp.second);
-  }
-  else if (py::isinstance<py::dict>(joint_velocities))
-  {
     auto joint_velocities_cpp = joint_velocities.cast<std::map<std::string, double>>();
     for (auto item : joint_velocities_cpp)
     {
       robot_state->setVariableVelocity(item.first, item.second);
     }
-  }
-  else
-  {
-    throw std::invalid_argument("Invalid joint_velocities type");
-  }
 }
 
 py::dict get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state)
@@ -156,25 +132,13 @@ py::dict get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robo
   return joint_acceleration;
 }
 
-void set_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state, py::object& joint_accelerations)
+void set_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_accelerations)
 {
-  if (py::isinstance<py::tuple>(joint_accelerations))
-  {
-    auto joint_accelerations_cpp = joint_accelerations.cast<std::pair<std::string, std::vector<double>>>();
-    robot_state->setJointGroupAccelerations(joint_accelerations_cpp.first, joint_accelerations_cpp.second);
-  }
-  else if (py::isinstance<py::dict>(joint_accelerations))
-  {
     auto joint_accelerations_cpp = joint_accelerations.cast<std::map<std::string, double>>();
     for (auto item : joint_accelerations_cpp)
     {
       robot_state->setVariableAcceleration(item.first, item.second);
     }
-  }
-  else
-  {
-    throw std::invalid_argument("Invalid joint_accelerations type");
-  }
 }
 
 py::dict get_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_state)
