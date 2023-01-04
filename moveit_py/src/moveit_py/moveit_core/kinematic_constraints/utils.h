@@ -34,43 +34,32 @@
 
 /* Author: Peter David Fagan */
 
-#include "moveit_core/collision_detection/collision_common.h"
-#include "moveit_core/collision_detection/collision_matrix.h"
-#include "moveit_core/kinematic_constraints/utils.h"
-#include "moveit_core/planning_interface/planning_response.h"
-#include "moveit_core/planning_scene/planning_scene.h"
-#include "moveit_core/robot_model/joint_model_group.h"
-#include "moveit_core/robot_model/robot_model.h"
-#include "moveit_core/robot_state/robot_state.h"
-#include "moveit_core/robot_trajectory/robot_trajectory.h"
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/stl.h>
+#include <rclcpp/rclcpp.hpp>
+#include <moveit/robot_model/robot_model.h>
 
-PYBIND11_MODULE(core, m)
+namespace py = pybind11;
+
+namespace moveit_py
 {
-  m.doc() = R"(
-            Python bindings for moveit_core functionalities.
-            )";
+namespace bind_kinematic_constraints
+{
 
-  // Provide custom function signatures
-  py::options options;
-  options.disable_function_signatures();
+py::object construct_link_constraint(const std::string& link_name,
+				     const std::string& source_frame,
+                                     std::optional<std::vector<double>> cartesian_position,
+                                     std::optional<double> cartesian_position_tolerance,
+                                     std::optional<std::vector<double>> orientation,
+                                     std::optional<double> orientation_tolerance);
 
-  // Construct module classes
-  moveit_py::bind_collision_detection::init_collision_request(m);
-  moveit_py::bind_collision_detection::init_collision_result(m);
-  moveit_py::bind_collision_detection::init_acm(m);
-  moveit_py::bind_kinematic_constraints::init_kinematic_constraints(m);
-  moveit_py::bind_planning_scene::init_planning_scene(m);
-  moveit_py::bind_planning_interface::init_motion_plan_response(m);
-  moveit_py::bind_robot_model::init_joint_model_group(m);
-  moveit_py::bind_robot_model::init_robot_model(m);
-  moveit_py::bind_robot_state::init_robot_state(m);
-  moveit_py::bind_robot_trajectory::init_robot_trajectory(m);
-  // TODO (peterdavidfagan): complete LinkModel bindings
-  // LinkModel
-  // py::class_<moveit::core::LinkModel>(m, "LinkModel");
+py::object construct_joint_constraint(moveit::core::RobotState& robot_state,
+                                      moveit::core::JointModelGroup* joint_model_group, double tolerance);
 
-  // TODO (peterdavidfagan): complete JointModel bindings
-  // JointModel (this is an abstract base class)
-  // py::class_<moveit::core::JointModel>(m, "JointModel");
-}
+py::object construct_constraints_from_node(const std::shared_ptr<rclcpp::Node>& node_name, const std::string& ns);
 
+void init_kinematic_constraints(py::module& m);
+
+}  // namespace bind_kinematic_constraints
+}  // namespace moveit_py

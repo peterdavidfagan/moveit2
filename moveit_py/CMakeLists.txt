@@ -24,6 +24,7 @@ pybind11_add_module(core
 	src/moveit_py/core.cpp
 	src/moveit_py/moveit_core/collision_detection/collision_common.cpp 
 	src/moveit_py/moveit_core/collision_detection/collision_matrix.cpp
+	src/moveit_py/moveit_core/kinematic_constraints/utils.cpp
 	src/moveit_py/moveit_core/planning_interface/planning_response.cpp
 	src/moveit_py/moveit_core/planning_scene/planning_scene.cpp
 	src/moveit_py/moveit_core/transforms/transforms.cpp
@@ -36,6 +37,7 @@ pybind11_add_module(core
 target_link_libraries(core PRIVATE moveit_ros_planning::moveit_cpp
 				   rclcpp::rclcpp
 				   moveit_core::moveit_transforms
+				   moveit_core::moveit_kinematic_constraints
 				   moveit_core::moveit_planning_interface
 				   moveit_core::moveit_planning_scene
 				   moveit_core::moveit_utils
