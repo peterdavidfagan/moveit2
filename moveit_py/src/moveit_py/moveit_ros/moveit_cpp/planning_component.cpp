@@ -159,7 +159,7 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
         double* ptr = (double*)buf.ptr;
 
         geometry_msgs::msg::PoseStamped pose_goal_cpp;
-        pose_goal_cpp.header.frame_id = link_name;
+        pose_goal_cpp.header.frame_id = pose_dict["source_frame"].cast<std::string>();
         pose_goal_cpp.pose.position.x = ptr[0];
         pose_goal_cpp.pose.position.y = ptr[1];
         pose_goal_cpp.pose.position.z = ptr[2];
@@ -175,6 +175,7 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
         return planning_component->setGoal(pose_goal_cpp, link_name);
       }
     }
+    // TODO catch specific errors
     catch (...)
     {
       throw std::invalid_argument("Invalid pose_goal dictionary");
@@ -185,10 +186,16 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
   {
     // iterate through list of constraints and convert to C++
     std::vector<moveit_msgs::msg::Constraints> constraints_vec_cpp;
-    py::list constraints = motion_plan_constraints.value().cast<py::list>();
+    py::list constraints = motion_plan_constraints.value();
+    py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
     for (int i = 0; i < py::len(constraints); i++)
     {
-      moveit_msgs::msg::Constraints constraints_cpp = ConstraintsToCpp(constraints[i]);
+      // convert python object to cpp constraints message
+      moveit_msgs::msg::Constraints constraints_cpp;
+      py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(constraints[i]);
+      deserializeMsg(serialized_msg, constraints_cpp);
+
+      // moveit_msgs::msg::Constraints constraints_cpp = ConstraintsToCpp(constraints[i]);
       constraints_vec_cpp.push_back(constraints_cpp);
     }
 
