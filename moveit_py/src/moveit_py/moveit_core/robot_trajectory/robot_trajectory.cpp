@@ -40,9 +40,11 @@ namespace moveit_py
 {
 namespace bind_robot_trajectory
 {
-void init_robot_trajectory(py::module &m)
+void init_robot_trajectory(py::module& m)
 {
-  py::class_<robot_trajectory::RobotTrajectory, std::shared_ptr<robot_trajectory::RobotTrajectory>>(m,
+  py::module robot_trajectory = m.def_submodule("robot_trajectory");
+
+  py::class_<robot_trajectory::RobotTrajectory, std::shared_ptr<robot_trajectory::RobotTrajectory>>(robot_trajectory,
                                                                                                     "RobotTrajectory",
                                                                                                     R"(
                                                     Maintains a sequence of waypoints and the durations between these waypoints.

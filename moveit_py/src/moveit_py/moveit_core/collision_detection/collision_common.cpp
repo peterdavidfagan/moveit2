@@ -42,7 +42,9 @@ namespace bind_collision_detection
 {
 void init_collision_request(py::module& m)
 {
-  py::class_<collision_detection::CollisionRequest>(m, "CollisionRequest", R"(
+  py::module collision_detection = m.def_submodule("collision_detection");
+
+  py::class_<collision_detection::CollisionRequest>(collision_detection, "CollisionRequest", R"(
       Representation of a collision checking request.
       )")
 
@@ -96,7 +98,9 @@ void init_collision_request(py::module& m)
 
 void init_collision_result(py::module& m)
 {
-  py::class_<collision_detection::CollisionResult>(m, "CollisionResult", R"(
+  py::module collision_detection = m.def_submodule("collision_detection");
+
+  py::class_<collision_detection::CollisionResult>(collision_detection, "CollisionResult", R"(
       Representation of a collision checking result.
       )")
       .def_readwrite("collision", &collision_detection::CollisionResult::collision,

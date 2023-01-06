@@ -114,11 +114,11 @@ py::dict get_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_s
 
 void set_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_velocities)
 {
-    auto joint_velocities_cpp = joint_velocities.cast<std::map<std::string, double>>();
-    for (auto item : joint_velocities_cpp)
-    {
-      robot_state->setVariableVelocity(item.first, item.second);
-    }
+  auto joint_velocities_cpp = joint_velocities.cast<std::map<std::string, double>>();
+  for (auto item : joint_velocities_cpp)
+  {
+    robot_state->setVariableVelocity(item.first, item.second);
+  }
 }
 
 py::dict get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state)
@@ -134,11 +134,11 @@ py::dict get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robo
 
 void set_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_accelerations)
 {
-    auto joint_accelerations_cpp = joint_accelerations.cast<std::map<std::string, double>>();
-    for (auto item : joint_accelerations_cpp)
-    {
-      robot_state->setVariableAcceleration(item.first, item.second);
-    }
+  auto joint_accelerations_cpp = joint_accelerations.cast<std::map<std::string, double>>();
+  for (auto item : joint_accelerations_cpp)
+  {
+    robot_state->setVariableAcceleration(item.first, item.second);
+  }
 }
 
 py::dict get_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_state)
@@ -232,7 +232,9 @@ bool set_to_default_values(std::shared_ptr<moveit::core::RobotState>& robot_stat
 
 void init_robot_state(py::module& m)
 {
-  py::class_<moveit::core::RobotState, std::shared_ptr<moveit::core::RobotState>>(m, "RobotState",
+  py::module robot_state = m.def_submodule("robot_state");
+
+  py::class_<moveit::core::RobotState, std::shared_ptr<moveit::core::RobotState>>(robot_state, "RobotState",
                                                                                   R"(
           Representation of a robot's state.
           At the lowest level, a state is a collection of variables. Each variable has a name and can have position, velocity, acceleration and effort associated to it. Effort and acceleration share the memory area for efficiency reasons (one should not set both acceleration and effort in the same state and expect things to work). Often variables correspond to joint names as well (joints with one degree of freedom have one variable), but joints with multiple degrees of freedom have more variables. Operations are allowed at variable level, joint level (see JointModel) and joint group level (see JointModelGroup).

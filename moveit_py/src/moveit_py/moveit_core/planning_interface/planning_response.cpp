@@ -84,8 +84,10 @@ std::string get_motion_plan_response_planner_id(std::shared_ptr<planning_interfa
 
 void init_motion_plan_response(py::module& m)
 {
+  py::module planning_interface = m.def_submodule("planning_interface");
+
   py::class_<planning_interface::MotionPlanResponse, std::shared_ptr<planning_interface::MotionPlanResponse>>(
-      m, "MotionPlanResponse", R"()")
+      planning_interface, "MotionPlanResponse", R"()")
 
       //.def(py::init<>(), R"()")
 

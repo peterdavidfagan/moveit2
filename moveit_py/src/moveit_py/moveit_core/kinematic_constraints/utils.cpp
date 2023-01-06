@@ -158,14 +158,17 @@ py::object construct_constraints_from_node(const std::shared_ptr<rclcpp::Node>& 
 
 void init_kinematic_constraints(py::module& m)
 {
-  m.def("construct_link_constraint", &construct_link_constraint, py::arg("link_name"), py::arg("source_frame"),
-        py::arg("cartesian_position") = nullptr, py::arg("cartesian_position_tolerance") = nullptr,
-        py::arg("orientation") = nullptr, py::arg("orientation_tolerance") = nullptr,
-        "Construct a link constraint message");
-  m.def("construct_joint_constraint", &construct_joint_constraint, py::arg("robot_state"), py::arg("joint_model_group"),
-        py::arg("tolerance") = 0.01, "Construct a joint constraint message");
-  m.def("construct_constraints_from_node", &construct_constraints_from_node, py::arg("node_name"), py::arg("ns"),
-        "Construct a constraint message from a node");
+  py::module kinematic_constraints = m.def_submodule("kinematic_constraints");
+
+  kinematic_constraints.def("construct_link_constraint", &construct_link_constraint, py::arg("link_name"),
+                            py::arg("source_frame"), py::arg("cartesian_position") = nullptr,
+                            py::arg("cartesian_position_tolerance") = nullptr, py::arg("orientation") = nullptr,
+                            py::arg("orientation_tolerance") = nullptr, "Construct a link constraint message");
+  kinematic_constraints.def("construct_joint_constraint", &construct_joint_constraint, py::arg("robot_state"),
+                            py::arg("joint_model_group"), py::arg("tolerance") = 0.01,
+                            "Construct a joint constraint message");
+  kinematic_constraints.def("construct_constraints_from_node", &construct_constraints_from_node, py::arg("node_name"),
+                            py::arg("ns"), "Construct a constraint message from a node");
 }
 
 }  // namespace bind_kinematic_constraints

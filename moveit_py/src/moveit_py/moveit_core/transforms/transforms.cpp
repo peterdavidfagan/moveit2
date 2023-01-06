@@ -59,7 +59,9 @@ std::map<std::string, Eigen::MatrixXd> get_all_transforms(std::shared_ptr<moveit
 
 void init_transforms(py::module& m)
 {
-  py::class_<moveit::core::Transforms, std::shared_ptr<moveit::core::Transforms>>(m, "Transforms",
+  py::module transforms = m.def_submodule("transforms");
+
+  py::class_<moveit::core::Transforms, std::shared_ptr<moveit::core::Transforms>>(transforms, "Transforms",
                                                                                   R"(A snapshot of a transform tree.)")
 
       .def(py::init<std::string&>(), R"(Create a new Transforms object.)", py::arg("target_frame"))

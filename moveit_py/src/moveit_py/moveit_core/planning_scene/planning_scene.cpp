@@ -159,7 +159,10 @@ void set_object_color(std::shared_ptr<planning_scene::PlanningScene>& planning_s
 
 void init_planning_scene(py::module& m)
 {
-  py::class_<planning_scene::PlanningScene, std::shared_ptr<planning_scene::PlanningScene>>(m, "PlanningScene",
+  py::module planning_scene = m.def_submodule("planning_scene");
+
+  py::class_<planning_scene::PlanningScene, std::shared_ptr<planning_scene::PlanningScene>>(planning_scene,
+                                                                                            "PlanningScene",
                                                                                             R"(
       Representation of the environment as seen by a planning instance. The environment geometry, the robot geometry and state are maintained.
       )")
@@ -190,7 +193,7 @@ void init_planning_scene(py::module& m)
 
       .def_property("planning_scene_message", &moveit_py::bind_planning_scene::get_planning_scene_msg, nullptr,
                     py::return_value_policy::move)
-      
+
       .def_property("transforms", py::overload_cast<>(&planning_scene::PlanningScene::getTransforms), nullptr)
 
       // methods

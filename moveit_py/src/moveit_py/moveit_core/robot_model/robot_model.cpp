@@ -47,7 +47,9 @@ namespace bind_robot_model
 {
 void init_robot_model(py::module& m)
 {
-  py::class_<moveit::core::RobotModel, std::shared_ptr<moveit::core::RobotModel>>(m, "RobotModel",
+  py::module robot_model = m.def_submodule("robot_model");
+ 
+  py::class_<moveit::core::RobotModel, std::shared_ptr<moveit::core::RobotModel>>(robot_model, "RobotModel",
                                                                                   R"(
           Representation of a kinematic model.
           )")

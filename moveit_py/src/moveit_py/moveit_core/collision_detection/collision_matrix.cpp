@@ -56,8 +56,10 @@ get_entry(std::shared_ptr<collision_detection::AllowedCollisionMatrix> acm, cons
 
 void init_acm(py::module& m)
 {
+  py::module collision_detection = m.def_submodule("collision_detection");
+
   py::class_<collision_detection::AllowedCollisionMatrix, std::shared_ptr<collision_detection::AllowedCollisionMatrix>>(
-      m, "AllowedCollisionMatrix",
+      collision_detection, "AllowedCollisionMatrix",
       R"(
           Definition of a structure for the allowed collision matrix. All elements in the collision world are referred to by their names. This class represents which collisions are allowed to happen and which are not.
           )")
