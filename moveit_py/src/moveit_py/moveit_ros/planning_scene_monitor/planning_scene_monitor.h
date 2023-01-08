@@ -50,7 +50,6 @@ namespace moveit_py
 {
 namespace bind_planning_scene_monitor
 {
-
 class LockedPlanningSceneContextManagerRW
 {
 public:

@@ -48,7 +48,7 @@ namespace bind_robot_model
 void init_robot_model(py::module& m)
 {
   py::module robot_model = m.def_submodule("robot_model");
- 
+
   py::class_<moveit::core::RobotModel, std::shared_ptr<moveit::core::RobotModel>>(robot_model, "RobotModel",
                                                                                   R"(
           Representation of a kinematic model.
@@ -82,7 +82,7 @@ void init_robot_model(py::module& m)
            py::arg("urdf_xml_path"), py::arg("srdf_xml_path"),
            R"(
            Initializes a kinematic model for a robot.
-           
+
            Args:
                urdf_xml_path (str): The filepath to the urdf file describing the robot.
                srdf_xml_path (str): The filepath to the srdf file describing the robot semantics.
@@ -96,8 +96,8 @@ void init_robot_model(py::module& m)
                     )")
 
       .def_property("model_frame", &moveit::core::RobotModel::getModelFrame, nullptr,
-                    R"( 
-                    str: Get the frame in which the transforms for this model are computed (when using a :py:class:`moveit_py.core.RobotState`). 
+                    R"(
+                    str: Get the frame in which the transforms for this model are computed (when using a :py:class:`moveit_py.core.RobotState`).
                     This frame depends on the root joint. As such, the frame is either extracted from SRDF, or it is assumed to be the name of the root link.
                    )")
 
@@ -117,8 +117,8 @@ void init_robot_model(py::module& m)
             return ss.str();
           },
           py::return_value_policy::move,
-          R"( 
-          Gets a formatted string containing a summary of relevant information from the robot model.          
+          R"(
+          Gets a formatted string containing a summary of relevant information from the robot model.
           Returns:
               str: Formatted string containing generic robot model information.
           )")

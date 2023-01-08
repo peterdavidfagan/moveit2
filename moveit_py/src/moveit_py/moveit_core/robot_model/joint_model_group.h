@@ -50,4 +50,3 @@ namespace bind_robot_model
 void init_joint_model_group(py::module& m);
 }  // namespace bind_robot_model
 }  // namespace moveit_py
-

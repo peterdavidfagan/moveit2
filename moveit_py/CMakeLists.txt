@@ -25,7 +25,7 @@ endfunction()
 
 pybind11_add_module(core
 	src/moveit_py/core.cpp
-	src/moveit_py/moveit_core/collision_detection/collision_common.cpp 
+	src/moveit_py/moveit_core/collision_detection/collision_common.cpp
 	src/moveit_py/moveit_core/collision_detection/collision_matrix.cpp
 	src/moveit_py/moveit_core/kinematic_constraints/utils.cpp
 	src/moveit_py/moveit_core/planning_interface/planning_response.cpp
@@ -43,14 +43,14 @@ target_link_libraries(core PRIVATE moveit_ros_planning::moveit_cpp
 				   moveit_core::moveit_planning_interface
 				   moveit_core::moveit_planning_scene
 				   moveit_core::moveit_utils
-				   moveit_core::moveit_robot_model 
+				   moveit_core::moveit_robot_model
 				   moveit_core::moveit_robot_state
 				   pybind11_utils)
 configure_build_install_location(core)
 
-pybind11_add_module(planning 
+pybind11_add_module(planning
 	src/moveit_py/planning.cpp
-        src/moveit_py/moveit_ros/moveit_cpp/moveit_cpp.cpp	
+        src/moveit_py/moveit_ros/moveit_cpp/moveit_cpp.cpp
 	src/moveit_py/moveit_ros/moveit_cpp/planning_component.cpp
 	src/moveit_py/moveit_ros/planning_scene_monitor/planning_scene_monitor.cpp
 	)

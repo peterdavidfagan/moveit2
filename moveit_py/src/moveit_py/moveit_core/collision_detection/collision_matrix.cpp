@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik Inc. nor te names of its
+ *   * Neither the name of PickNik Inc. nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -40,7 +40,6 @@ namespace moveit_py
 {
 namespace bind_collision_detection
 {
-
 std::pair<bool, collision_detection::AllowedCollision::Type>
 get_entry(std::shared_ptr<collision_detection::AllowedCollisionMatrix> acm, const std::string& name1,
           const std::string& name2)

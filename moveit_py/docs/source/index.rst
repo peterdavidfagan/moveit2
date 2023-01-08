@@ -10,4 +10,3 @@ MoveItPy API Documentation
    moveit_py.core
    moveit_py.planning
    moveit_py.servo_client
-

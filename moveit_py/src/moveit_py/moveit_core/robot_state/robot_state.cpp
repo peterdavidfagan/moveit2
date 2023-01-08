@@ -43,7 +43,6 @@ namespace moveit_py
 {
 namespace bind_robot_state
 {
-
 void update(std::shared_ptr<moveit::core::RobotState>& robot_state, bool force, std::string& category)
 {
   if (category == "all")
@@ -252,10 +251,10 @@ void init_robot_state(py::module& m)
       .def(py::init<const std::shared_ptr<const moveit::core::RobotModel>&>(),
            R"(
            Initializes robot state from a robot model.
-               
+
            Args:
                :py:class:`moveit_py.core.RobotModel`: The robot model associated to the instantiated robot state.
-               
+
            )")
 
       // Get underlying robot model, frame transformations and jacobian
@@ -275,7 +274,7 @@ void init_robot_state(py::module& m)
            R"(
            Get the transformation matrix from the model frame (root of model) to the frame identified by frame_id.
            If frame_id was not found, frame_found is set to false and an identity transform is returned.
-       This method is restricted to frames defined within the robot state and doesn't include collision object present in the collision world. Please use the PlanningScene.get_frame_transform method for collision world objects. 
+       This method is restricted to frames defined within the robot state and doesn't include collision object present in the collision world. Please use the PlanningScene.get_frame_transform method for collision world objects.
            Args:
                frame_id (str): The id of the frame to get the transform for.
            Returns:
@@ -360,7 +359,7 @@ void init_robot_state(py::module& m)
            py::arg("joint_model_group_name"), py::arg("position_values"),
            R"(
            Sets the positions of the joints in the specified joint model group.
-           Args: 
+           Args:
                joint_model_group_name (str):
                position_values (:py:class:`numpy.ndarray`): The positions of the joints in the joint model group.
        )")
@@ -372,8 +371,8 @@ void init_robot_state(py::module& m)
            py::arg("joint_model_group_name"), py::arg("position_values"),
            R"(
            Sets the active positions of joints in the specified joint model group.
-           
-           Args: 
+
+           Args:
                joint_model_group_name (str): The name of the joint model group to set the active positions for.
                position_values (:py:class:`numpy.ndarray`): The positions of the joints in the joint model group.
        )")
@@ -403,11 +402,11 @@ void init_robot_state(py::module& m)
            py::arg("joint_model_group_name"),
            R"(
            For a given group, get the velocity values of the variables that make up the group.
-           
+
            Args:
                joint_model_group_name (str): The name of the joint model group to copy the velocities for.
            Returns:
-               :py:class:`numpy.ndarray`: The velocities of the joints in the joint model group.   
+               :py:class:`numpy.ndarray`: The velocities of the joints in the joint model group.
        )")
 
       .def("set_joint_group_accelerations",
@@ -416,7 +415,7 @@ void init_robot_state(py::module& m)
            py::arg("joint_model_group_name"), py::arg("acceleration_values"),
            R"(
            Sets the accelerations of the joints in the specified joint model group.
-               
+
            Args:
                joint_model_group_name (str): The name of the joint model group to set the accelerations for.
                acceleration_values (:py:class:`numpy.ndarray`): The accelerations of the joints in the joint model group.
@@ -457,7 +456,7 @@ void init_robot_state(py::module& m)
       // Setting entire state values
       .def("set_to_default_values", py::overload_cast<>(&moveit::core::RobotState::setToDefaultValues),
            R"(
-           Set all joints to their default positions. 
+           Set all joints to their default positions.
            The default position is 0, or if that is not within bounds then half way between min and max bound.
            )")
 
@@ -500,14 +499,14 @@ void init_robot_state(py::module& m)
       .def("clear_attached_bodies", py::overload_cast<>(&moveit::core::RobotState::clearAttachedBodies),
            R"(
       	   Clear all attached bodies.
-      
-      	   We only allow for attaching of objects via the PlanningScene instance. This method allows any attached objects that are associated to this RobotState instance to be removed. 
+
+      	   We only allow for attaching of objects via the PlanningScene instance. This method allows any attached objects that are associated to this RobotState instance to be removed.
 	   )")
 
       .def("update", &moveit_py::bind_robot_state::update, py::arg("force") = false, py::arg("type") = "all",
            R"(
              Update state transforms.
-  
+
              Args:
                  force (bool):
              category (str): specifies the category to update. All indicates updating all transforms while "links_only"

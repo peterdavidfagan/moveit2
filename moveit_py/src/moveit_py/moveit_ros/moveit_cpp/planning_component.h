@@ -63,10 +63,10 @@ plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
      std::optional<const moveit_cpp::PlanningComponent::SolutionCallbackFunction> solution_selection_callback,
      std::optional<moveit_cpp::PlanningComponent::StoppingCriterionFunction> stopping_criterion_callback);
 
-
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
               std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state,
-              std::optional<py::dict> pose_goal, std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints);
+              std::optional<py::dict> pose_goal,
+              std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints);
 
 bool set_start_state(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
                      std::optional<std::string> configuration_name,

@@ -43,7 +43,6 @@ namespace moveit_py
 {
 namespace bind_kinematic_constraints
 {
-
 moveit_msgs::msg::Constraints construct_link_constraint(const std::string& link_name, const std::string& source_frame,
                                                         std::optional<std::vector<double>> cartesian_position,
                                                         std::optional<double> cartesian_position_tolerance,

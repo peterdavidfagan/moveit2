@@ -73,4 +73,3 @@ PYBIND11_MODULE(core, m)
   // JointModel (this is an abstract base class)
   // py::class_<moveit::core::JointModel>(m, "JointModel");
 }
-

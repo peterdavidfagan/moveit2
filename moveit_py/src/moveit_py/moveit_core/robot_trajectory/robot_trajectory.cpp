@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik Inc. nor te names of its
+ *   * Neither the name of PickNik Inc. nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -53,7 +53,7 @@ void init_robot_trajectory(py::module& m)
       .def("__getitem__", &robot_trajectory::RobotTrajectory::getWayPoint, py::arg("idx"),
            R"(
            Get the waypoint at the specified index in the trajectory.
-           
+
            Returns:
                :py:class:`moveit_py.core.RobotState`: The robot state corresponding to a waypoint at the specified index in the trajectory.
            )")

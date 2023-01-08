@@ -47,6 +47,6 @@ namespace moveit_py
 {
 namespace bind_robot_trajectory
 {
-void init_robot_trajectory(py::module &m);
+void init_robot_trajectory(py::module& m);
 }  // namespace bind_robot_trajectory
 }  // namespace moveit_py

@@ -42,7 +42,6 @@ namespace moveit_py
 {
 namespace bind_planning_scene
 {
-
 void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
                             moveit_msgs::msg::CollisionObject& collision_object_msg,
                             std::optional<moveit_msgs::msg::ObjectColor> color_msg)
@@ -149,7 +148,7 @@ void init_planning_scene(py::module& m)
 
       .def("get_frame_transform", &moveit_py::bind_planning_scene::get_frame_transform, py::arg("frame_id"),
            R"(
-           Get the transform corresponding to the frame id. 
+           Get the transform corresponding to the frame id.
            This will be known if id is a link name, an attached body id or a collision object. Return identity when no transform is available.
            Args:
                frame_id (str): The frame id to get the transform for.
@@ -248,9 +247,9 @@ void init_planning_scene(py::module& m)
            Args:
                state (moveit_py.core.RobotState): The robot state to check constraints for.
                    constraints (moveit_msgs.msg.Constraints): The constraints to check.
-           verbose (bool): 
+           verbose (bool):
            Returns:
-               bool: true if state is contrained otherwise false.
+               bool: true if state is constrained otherwise false.
            )")
 
       .def("is_path_valid",
@@ -259,12 +258,12 @@ void init_planning_scene(py::module& m)
            py::arg("trajectory"), py::arg("joint_model_group_name"), py::arg("verbose") = false,
            py::arg("invalid_index") = nullptr,
            R"(
-           Check if a given path is valid. 
+           Check if a given path is valid.
            Each state is checked for validity (collision avoidance and feasibility)
            Args:
                trajectory (:py:class:`moveit_py.core.RobotTrajectory`): The trajectory to check.
                joint_model_group_name (str): The joint model group to check the path against.
-               verbose (bool): 
+               verbose (bool):
 	       invalid_index (list):
            Returns:
                bool: true if the path is valid otherwise false.
@@ -324,7 +323,7 @@ void init_planning_scene(py::module& m)
            Args:
                collision_request ():
                collision_result ():
-           Returns: 
+           Returns:
                bool: true if state is in collision otherwise false.
            )")
 

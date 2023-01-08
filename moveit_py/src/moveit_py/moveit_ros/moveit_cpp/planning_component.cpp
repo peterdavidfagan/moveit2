@@ -42,7 +42,6 @@ namespace moveit_py
 {
 namespace bind_planning_component
 {
-
 planning_interface::MotionPlanResponse
 plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
      std::shared_ptr<moveit_cpp::PlanningComponent::PlanRequestParameters>& single_plan_parameters,
@@ -99,7 +98,8 @@ plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
 
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
               std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state,
-              std::optional<py::dict> pose_goal, std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints)
+              std::optional<py::dict> pose_goal,
+              std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints)
 {
   // check that no more than one argument is specified
   if (configuration_name && robot_state)
@@ -325,13 +325,13 @@ void init_planning_component(py::module& m)
       // start state methods
       .def("set_start_state_to_current_state", &moveit_cpp::PlanningComponent::setStartStateToCurrentState,
            R"(
-           Set the start state of the plan to the current state of the robot. 
+           Set the start state of the plan to the current state of the robot.
            )")
 
       .def("set_start_state", &moveit_py::bind_planning_component::set_start_state,
            py::arg("configuration_name") = nullptr, py::arg("robot_state") = nullptr,
            R"(
-	   Set the start state of the plan to the given robot state. 
+	   Set the start state of the plan to the given robot state.
 	   Args:
 	       configuration_name (str): The name of the configuration to use as the start state.
 	       robot_state (:py:class:`moveit_msgs.msg.RobotState`): The robot state to use as the start state.
@@ -346,11 +346,12 @@ void init_planning_component(py::module& m)
       // goal state methods
       .def("set_goal",
            py::overload_cast<std::shared_ptr<moveit_cpp::PlanningComponent>&, std::optional<std::string>,
-                             std::optional<moveit::core::RobotState>, std::optional<py::dict>, std::optional<std::vector<moveit_msgs::msg::Constraints>>>(
+                             std::optional<moveit::core::RobotState>, std::optional<py::dict>,
+                             std::optional<std::vector<moveit_msgs::msg::Constraints>>>(
                &moveit_py::bind_planning_component::set_goal),
            py::arg("configuration_name") = nullptr, py::arg("robot_state") = nullptr, py::arg("pose_goal") = nullptr,
            py::arg("motion_plan_constraints") = nullptr,
-           R"( 
+           R"(
 	   Set the goal state for the planning component.
 	   Args:
 	       configuration_name (str): The name of the configuration to set the goal to.
@@ -382,7 +383,7 @@ void init_planning_component(py::module& m)
       .def("execute", &moveit_cpp::PlanningComponent::execute, py::arg("blocking") = true,
            py::return_value_policy::move,
            R"(
-           Execute the latest computed solution trajectory computed by plan(). 
+           Execute the latest computed solution trajectory computed by plan().
            By default this function terminates after the execution is complete. The execution can be run in background by setting blocking to false.
            Args:
                blocking (bool): Whether to wait for the execution to complete or not.
@@ -392,7 +393,7 @@ void init_planning_component(py::module& m)
       .def("set_workspace", &moveit_cpp::PlanningComponent::setWorkspace, py::arg("min_x"), py::arg("min_y"),
            py::arg("min_z"), py::arg("max_x"), py::arg("max_y"), py::arg("max_z"),
            R"(
-           Specify the workspace bounding box. 
+           Specify the workspace bounding box.
            The box is specified in the planning frame (i.e. relative to the robot root link start position). The workspace applies only to the root joint of a mobile robot (driving base, quadrotor) and does not limit the workspace of a robot arm.
            Args:
                min_x (float): The minimum x value of the workspace.

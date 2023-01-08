@@ -40,7 +40,6 @@ namespace moveit_py
 {
 namespace bind_transforms
 {
-
 Eigen::MatrixXd get_transform(std::shared_ptr<moveit::core::Transforms>& transforms, std::string& from_frame)
 {
   auto transform = transforms->getTransform(from_frame);

@@ -1,11 +1,11 @@
 # MoveIt 2 Python Library
 <img src="./banner.png" width="50%">
 
-`moveit_py` is a Python library for interfacing with the core functionalities of Moveit 2. 
-The goal of this library is to provide a simplified interface for Moveit 2 Python users. 
+`moveit_py` is a Python library for interfacing with the core functionalities of Moveit 2.
+The goal of this library is to provide a simplified interface for Moveit 2 Python users.
 
 This Python library depends on [Pybind11](https://pybind11.readthedocs.io/en/stable/index.html) for generating Python bindings.
-The project is split into the following folders: 
+The project is split into the following folders:
 
     ├── docs                    # Sphinx documentation files
     ├── moveit_py               # Python library stubs; Python functionalities built on top of bindings
@@ -20,9 +20,9 @@ The project is split into the following folders:
 (3) [Teleoperation]()
 
 ## Contribution Guidelines
-Community contributions are welcome. 
+Community contributions are welcome.
 
 For detailed contribution guidelines please consult the official [Moveit contribution guidelines](https://moveit.ros.org/documentation/contributing/).
 
 ## Acknowledgements
-Thank you to the [Google Summer of Code program](https://summerofcode.withgoogle.com/) for sponsoring the development of this Python library. Thank you to the MoveIt maintainers Henning Kayser (@henningkayser) and Michael Gorner (@v4hn) for their guidance as supervisors of my GSoC project. Finally thank you to the [ML Collective](https://mlcollective.org/) for providing compute support for this project. 
+Thank you to the [Google Summer of Code program](https://summerofcode.withgoogle.com/) for sponsoring the development of this Python library. Thank you to the MoveIt maintainers Henning Kayser (@henningkayser) and Michael Gorner (@v4hn) for their guidance as supervisors of my GSoC project. Finally thank you to the [ML Collective](https://mlcollective.org/) for providing compute support for this project.

@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik Inc. nor te names of its
+ *   * Neither the name of PickNik Inc. nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -47,7 +47,6 @@ namespace moveit_py
 {
 namespace bind_transforms
 {
-
 Eigen::MatrixXd get_transform(std::shared_ptr<moveit::core::Transforms>& transforms, std::string& from_frame);
 
 std::map<std::string, Eigen::MatrixXd> get_all_transforms(std::shared_ptr<moveit::core::Transforms>& transforms);

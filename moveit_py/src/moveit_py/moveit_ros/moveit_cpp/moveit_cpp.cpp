@@ -40,7 +40,6 @@ namespace moveit_py
 {
 namespace bind_moveit_cpp
 {
-
 std::shared_ptr<moveit_cpp::PlanningComponent>
 get_planning_component(std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp_ptr, std::string planning_component)
 {
@@ -123,7 +122,7 @@ void init_moveit_py(py::module& m)
            py::arg("config_dict") = py::none(), py::arg("provide_planning_service") = true,
            py::return_value_policy::take_ownership,
            R"(
-           Initialize moveit_cpp node and the planning scene service. 
+           Initialize moveit_cpp node and the planning scene service.
            )")
 
       .def("get_planning_component", &moveit_py::bind_moveit_cpp::get_planning_component,

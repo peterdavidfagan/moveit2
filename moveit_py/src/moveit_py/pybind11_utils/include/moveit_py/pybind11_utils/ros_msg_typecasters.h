@@ -47,7 +47,6 @@ namespace pybind11
 {
 namespace detail
 {
-
 // Base class for type conversion (C++ <-> python) of ROS message types
 template <typename T>
 struct RosMsgTypeCaster

@@ -89,7 +89,6 @@ class TestRobotState(unittest.TestCase):
         self.assertIsInstance(jacobian, np.ndarray)
         # TODO(peterdavidfagan): add assertion for particular values
 
-
     def test_set_joint_group_positions(self):
         """
         Test that the joint group positions can be set
@@ -104,8 +103,10 @@ class TestRobotState(unittest.TestCase):
             joint_model_group_name="panda_arm", position_values=joint_group_positions
         )
 
-        self.assertEqual(joint_group_positions.tolist(), robot_state.copy_joint_group_positions("panda_arm").tolist())        
-
+        self.assertEqual(
+            joint_group_positions.tolist(),
+            robot_state.copy_joint_group_positions("panda_arm").tolist(),
+        )
 
     def test_set_joint_group_velocities(self):
         """
@@ -121,8 +122,10 @@ class TestRobotState(unittest.TestCase):
             joint_model_group_name="panda_arm", velocity_values=joint_group_velocities
         )
 
-        self.assertEqual(joint_group_velocities.tolist(), robot_state.copy_joint_group_velocities("panda_arm").tolist())      
-
+        self.assertEqual(
+            joint_group_velocities.tolist(),
+            robot_state.copy_joint_group_velocities("panda_arm").tolist(),
+        )
 
     def test_set_joint_group_accelerations(self):
         """
@@ -135,10 +138,14 @@ class TestRobotState(unittest.TestCase):
 
         joint_group_accelerations = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
         robot_state.set_joint_group_accelerations(
-            joint_model_group_name="panda_arm", acceleration_values=joint_group_accelerations
+            joint_model_group_name="panda_arm",
+            acceleration_values=joint_group_accelerations,
         )
 
-        self.assertEqual(joint_group_accelerations.tolist(), robot_state.copy_joint_group_accelerations("panda_arm").tolist())
+        self.assertEqual(
+            joint_group_accelerations.tolist(),
+            robot_state.copy_joint_group_accelerations("panda_arm").tolist(),
+        )
 
     # TODO (peterdavidfagan): requires kinematics solver to be loaded
     def test_set_from_ik(self):

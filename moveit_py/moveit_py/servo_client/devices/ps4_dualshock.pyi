@@ -13,7 +13,17 @@ class DualShockAxes:
     RIGHT_TRIGGER: int
     D_PAD_X: int
     D_PAD_Y: int
-    def __init__(self, LEFT_STICK_X, LEFT_STICK_Y, LEFT_TRIGGER, RIGHT_STICK_X, RIGHT_STICK_Y, RIGHT_TRIGGER, D_PAD_X, D_PAD_Y) -> None: ...
+    def __init__(
+        self,
+        LEFT_STICK_X,
+        LEFT_STICK_Y,
+        LEFT_TRIGGER,
+        RIGHT_STICK_X,
+        RIGHT_STICK_Y,
+        RIGHT_TRIGGER,
+        D_PAD_X,
+        D_PAD_Y,
+    ) -> None: ...
 
 class DualShockButtons:
     X: int
@@ -29,7 +39,22 @@ class DualShockButtons:
     HOME: int
     LEFT_STICK_TRIGGER: int
     RIGHT_STICK_TRIGGER: int
-    def __init__(self, X, O, TRIANGLE, SQUARE, L1, R1, L2, R2, SHARE, OPTIONS, HOME, LEFT_STICK_TRIGGER, RIGHT_STICK_TRIGGER) -> None: ...
+    def __init__(
+        self,
+        X,
+        O,
+        TRIANGLE,
+        SQUARE,
+        L1,
+        R1,
+        L2,
+        R2,
+        SHARE,
+        OPTIONS,
+        HOME,
+        LEFT_STICK_TRIGGER,
+        RIGHT_STICK_TRIGGER,
+    ) -> None: ...
 
 class PS4DualShock:
     Axes: DualShockAxes
@@ -38,6 +63,11 @@ class PS4DualShock:
 
 class PS4DualShockTeleop(TeleopDevice):
     logger: Any
-    def __init__(self, node_name: str = ..., device_name: str = ..., device_config: PS4DualShock = ...) -> None: ...
+    def __init__(
+        self,
+        node_name: str = ...,
+        device_name: str = ...,
+        device_config: PS4DualShock = ...,
+    ) -> None: ...
     def publish_command(self, data) -> None: ...
     def record(self) -> None: ...
