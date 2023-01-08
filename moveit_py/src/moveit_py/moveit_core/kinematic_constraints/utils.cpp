@@ -36,7 +36,7 @@
 
 #include "utils.h"
 #include <rclcpp/rclcpp.hpp>
-#include <serialize_ros_msg.h>
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
 #include <moveit/kinematic_constraints/utils.h>
 
 namespace moveit_py
@@ -44,11 +44,11 @@ namespace moveit_py
 namespace bind_kinematic_constraints
 {
 
-py::object construct_link_constraint(const std::string& link_name, const std::string& source_frame,
-                                     std::optional<std::vector<double>> cartesian_position,
-                                     std::optional<double> cartesian_position_tolerance,
-                                     std::optional<std::vector<double>> orientation,
-                                     std::optional<double> orientation_tolerance)
+moveit_msgs::msg::Constraints construct_link_constraint(const std::string& link_name, const std::string& source_frame,
+                                                        std::optional<std::vector<double>> cartesian_position,
+                                                        std::optional<double> cartesian_position_tolerance,
+                                                        std::optional<std::vector<double>> orientation,
+                                                        std::optional<double> orientation_tolerance)
 {
   // check that link cartesian and/or orientation constraints are specified
   if (!cartesian_position && !orientation)
@@ -116,44 +116,28 @@ py::object construct_link_constraint(const std::string& link_name, const std::st
         kinematic_constraints::constructGoalConstraints(link_name, quaternion, orientation_tolerance.value());
   }
 
-  // convert to python object
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = serializeMsg(constraints_cpp);
-
-  py::module_ moveit_msgs = py::module::import("moveit_msgs.msg");
-  py::object constraints_py = moveit_msgs.attr("Constraints")();
-  return rclpy_serialization.attr("deserialize_message")(serialized_msg, constraints_py);
+  return constraints_cpp;
 }
 
-py::object construct_joint_constraint(moveit::core::RobotState& robot_state,
-                                      moveit::core::JointModelGroup* joint_model_group, double tolerance)
+moveit_msgs::msg::Constraints construct_joint_constraint(moveit::core::RobotState& robot_state,
+                                                         moveit::core::JointModelGroup* joint_model_group,
+                                                         double tolerance)
 {
   // generate joint constraint message
   moveit_msgs::msg::Constraints joint_constraints =
       kinematic_constraints::constructGoalConstraints(robot_state, joint_model_group, tolerance);
 
-  // convert to python object
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = serializeMsg(joint_constraints);
-
-  py::module_ moveit_msgs = py::module::import("moveit_msgs.msg");
-  py::object constraints_py = moveit_msgs.attr("Constraints")();
-  return rclpy_serialization.attr("deserialize_message")(serialized_msg, constraints_py);
+  return joint_constraints;
 }
 
-py::object construct_constraints_from_node(const std::shared_ptr<rclcpp::Node>& node_name, const std::string& ns)
+moveit_msgs::msg::Constraints construct_constraints_from_node(const std::shared_ptr<rclcpp::Node>& node_name,
+                                                              const std::string& ns)
 {
   // construct constraint message
   moveit_msgs::msg::Constraints constraints_cpp;
   kinematic_constraints::constructConstraints(node_name, ns, constraints_cpp);
 
-  // convert to python object
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = serializeMsg(constraints_cpp);
-
-  py::module_ moveit_msgs = py::module::import("moveit_msgs.msg");
-  py::object constraints_py = moveit_msgs.attr("Constraints")();
-  return rclpy_serialization.attr("deserialize_message")(serialized_msg, constraints_py);
+  return constraints_cpp;
 }
 
 void init_kinematic_constraints(py::module& m)

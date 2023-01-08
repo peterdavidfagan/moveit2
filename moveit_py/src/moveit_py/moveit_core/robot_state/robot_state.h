@@ -39,8 +39,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
+#include <moveit_py/pybind11_utils/copy_ros_msg.h>
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <moveit/robot_state/robot_state.h>
 
@@ -55,9 +54,10 @@ void update(std::shared_ptr<moveit::core::RobotState>& robot_state, bool force, 
 Eigen::MatrixXd get_frame_transform(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string& frame_id);
 
 Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state,
-                                                       std::string& link_name);
+                                          std::string& link_name);
 
-py::object get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name);
+geometry_msgs::msg::Pose get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name);
+// py::object get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name);
 
 Eigen::VectorXd copy_joint_group_positions(std::shared_ptr<moveit::core::RobotState>& robot_state,
                                            const std::string& joint_model_group_name);
@@ -67,7 +67,7 @@ Eigen::VectorXd copy_joint_group_accelerations(std::shared_ptr<moveit::core::Rob
                                                const std::string& joint_model_group_name);
 
 bool set_from_ik(std::shared_ptr<moveit::core::RobotState>& robot_state, const std::string& joint_model_group_name,
-                 py::object& geometry_pose, const std::string& tip_name, double timeout);
+                 geometry_msgs::msg::Pose& geometry_pose, const std::string& tip_name, double timeout);
 
 Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_state,
                              const std::string& joint_model_group_name, const std::string link_model_name,

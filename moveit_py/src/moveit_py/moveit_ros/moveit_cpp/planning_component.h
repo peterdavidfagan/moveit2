@@ -40,8 +40,8 @@
 #include <pybind11/eigen.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
+#include <moveit_py/pybind11_utils/copy_ros_msg.h>
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
 #include <moveit/moveit_cpp/moveit_cpp.h>
 #include <moveit/moveit_cpp/planning_component.h>
 #include <moveit/moveit_cpp/plan_solutions.h>
@@ -63,16 +63,14 @@ plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
      std::optional<const moveit_cpp::PlanningComponent::SolutionCallbackFunction> solution_selection_callback,
      std::optional<moveit_cpp::PlanningComponent::StoppingCriterionFunction> stopping_criterion_callback);
 
+
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
               std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state,
-              std::optional<py::dict> pose_goal, std::optional<py::list> motion_plan_constraints);
+              std::optional<py::dict> pose_goal, std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints);
 
 bool set_start_state(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
                      std::optional<std::string> configuration_name,
                      std::optional<moveit::core::RobotState> robot_state);
-
-bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
-                          py::object path_constraints);
 
 void init_plan_request_parameters(py::module& m);
 

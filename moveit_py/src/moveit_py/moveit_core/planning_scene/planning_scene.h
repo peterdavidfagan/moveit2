@@ -39,8 +39,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
 #include <pybind11/stl.h>
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
+#include <moveit_py/pybind11_utils/copy_ros_msg.h>
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
 #include <moveit/planning_scene/planning_scene.h>
 
 namespace py = pybind11;
@@ -49,40 +49,14 @@ namespace moveit_py
 {
 namespace bind_planning_scene
 {
-void apply_planning_scene_world(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                                py::object& planning_scene_world_msg);
-
 void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                            py::object& collision_object_msg, std::optional<py::object>& color_msg);
-
-
-void set_object_color(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, const std::string& id,
-                      py::object& color);
-
-void apply_attached_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                                     py::object& attached_collision_object);
-
-void apply_octomap(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& octomap);
+                            moveit_msgs::msg::CollisionObject& collision_object_msg,
+                            std::optional<moveit_msgs::msg::ObjectColor> color_msg);
 
 Eigen::MatrixXd get_frame_transform(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
                                     const std::string& id);
 
-py::object get_planning_scene_msg(std::shared_ptr<planning_scene::PlanningScene>& planning_scene);
-
-bool is_path_valid(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                   robot_trajectory::RobotTrajectory& robot_trajectory, std::string& group, bool verbose);
-
-bool is_state_colliding(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, std::string group, bool verbose);
-
-bool is_state_colliding(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                        const moveit::core::RobotState& robot_state, const std::string& group, bool verbose);
-
-bool is_state_constrained(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                          const moveit::core::RobotState& robot_state, py::object constraints, bool verbose);
-
-moveit::core::RobotState& get_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene);
-
-void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& robot_state);
+moveit_msgs::msg::PlanningScene get_planning_scene_msg(std::shared_ptr<planning_scene::PlanningScene>& planning_scene);
 
 void init_planning_scene(py::module& m);
 }  // namespace bind_planning_scene

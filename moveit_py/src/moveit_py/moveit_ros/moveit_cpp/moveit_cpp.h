@@ -42,7 +42,7 @@
 #include <pybind11/stl.h>
 #include <moveit_msgs/msg/robot_state.h>
 #include <moveit_msgs/msg/move_it_error_codes.h>
-#include <serialize_ros_msg.h>
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
 #include <moveit/moveit_cpp/moveit_cpp.h>
 #include <moveit/moveit_cpp/planning_component.h>
 #include <rclcpp/rclcpp.hpp>

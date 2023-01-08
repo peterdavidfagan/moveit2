@@ -35,6 +35,9 @@
 /* Author: Peter David Fagan */
 
 #include "robot_state.h"
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
+#include <moveit_msgs/msg/robot_state.hpp>
+#include <moveit/robot_state/conversions.h>
 
 namespace moveit_py
 {
@@ -74,11 +77,10 @@ Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotSta
   return transformation.matrix();
 }
 
-py::object get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name)
+geometry_msgs::msg::Pose get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name)
 {
   Eigen::Isometry3d pose = robot_state->getGlobalLinkTransform(link_name);
-  geometry_msgs::msg::Pose pose_msg = tf2::toMsg(pose);
-  return PoseToPy(pose_msg);
+  return tf2::toMsg(pose);
 }
 
 py::dict get_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state)
@@ -194,13 +196,10 @@ Eigen::VectorXd copy_joint_group_accelerations(std::shared_ptr<moveit::core::Rob
 }
 
 bool set_from_ik(std::shared_ptr<moveit::core::RobotState>& robot_state, const std::string& joint_model_group_name,
-                 py::object& geometry_pose, const std::string& tip_name, double timeout)
+                 geometry_msgs::msg::Pose& geometry_pose, const std::string& tip_name, double timeout)
 {
   const moveit::core::JointModelGroup* joint_model_group = robot_state->getJointModelGroup(joint_model_group_name);
-
-  geometry_msgs::msg::Pose pose_cpp = PoseToCpp(geometry_pose);
-
-  return robot_state->setFromIK(joint_model_group, pose_cpp, tip_name, timeout);
+  return robot_state->setFromIK(joint_model_group, geometry_pose, tip_name, timeout);
 }
 
 Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_state,
@@ -233,6 +232,15 @@ bool set_to_default_values(std::shared_ptr<moveit::core::RobotState>& robot_stat
 void init_robot_state(py::module& m)
 {
   py::module robot_state = m.def_submodule("robot_state");
+
+  robot_state.def(
+      "robotStateToRobotStateMsg",
+      [](const moveit::core::RobotState& state, bool copy_attached_bodies) {
+        moveit_msgs::msg::RobotState state_msg;
+        moveit::core::robotStateToRobotStateMsg(state, state_msg, copy_attached_bodies);
+        return state_msg;
+      },
+      py::arg("state"), py::arg("copy_attached_bodies") = true);
 
   py::class_<moveit::core::RobotState, std::shared_ptr<moveit::core::RobotState>>(robot_state, "RobotState",
                                                                                   R"(

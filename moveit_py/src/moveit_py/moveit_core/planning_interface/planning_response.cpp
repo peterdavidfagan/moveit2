@@ -47,29 +47,17 @@ get_motion_plan_response_trajectory(std::shared_ptr<planning_interface::MotionPl
   return response->trajectory_;
 }
 
-py::object get_motion_plan_response_start_state(std::shared_ptr<planning_interface::MotionPlanResponse>& response)
+moveit_msgs::msg::RobotState get_motion_plan_response_start_state(std::shared_ptr<planning_interface::MotionPlanResponse>& response)
 {
-  py::module_ rclpy_serialization = py::module_::import("rclpy.serialization");
-  py::module_ moveit_msgs = py::module_::import("moveit_msgs.msg");
-
-  py::object robot_state = moveit_msgs.attr("RobotState")();
   moveit_msgs::msg::RobotState robot_state_msg = response->start_state_;
-  py::bytes serialized_msg = serializeMsg(robot_state_msg);
-  rclpy_serialization.attr("deserialize_message")(serialized_msg, robot_state);
-  return robot_state;
+  return robot_state_msg;
 }
 
-py::object get_motion_plan_response_error_code(std::shared_ptr<planning_interface::MotionPlanResponse>& response)
+moveit_msgs::msg::MoveItErrorCodes get_motion_plan_response_error_code(std::shared_ptr<planning_interface::MotionPlanResponse>& response)
 {
-  py::module_ rclpy_serialization = py::module_::import("rclpy.serialization");
-  py::module_ moveit_msgs = py::module_::import("moveit_msgs.msg");
-
-  py::object error_code = moveit_msgs.attr("MoveItErrorCodes")();
   moveit_msgs::msg::MoveItErrorCodes error_code_msg =
       static_cast<moveit_msgs::msg::MoveItErrorCodes>(response->error_code_);
-  py::bytes serialized_msg = serializeMsg(error_code_msg);
-  rclpy_serialization.attr("deserialize_message")(serialized_msg, error_code);
-  return error_code;
+  return error_code_msg;
 }
 
 double get_motion_plan_response_planning_time(std::shared_ptr<planning_interface::MotionPlanResponse>& response)

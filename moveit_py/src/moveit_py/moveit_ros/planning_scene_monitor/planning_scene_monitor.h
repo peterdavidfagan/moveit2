@@ -37,8 +37,8 @@
 #pragma once
 
 #include <pybind11/pybind11.h>
-#include <copy_ros_msg.h>
-#include <serialize_ros_msg.h>
+#include <moveit_py/pybind11_utils/copy_ros_msg.h>
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
 #include <rclcpp/rclcpp.hpp>
 #include <moveit_msgs/msg/planning_scene.hpp>
 #include <moveit_msgs/srv/apply_planning_scene.hpp>
@@ -97,7 +97,7 @@ read_only(const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_
 //                                  const py::object& value, const py::object& traceback);
 
 void apply_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>& planning_scene_monitor,
-                          py::object& planning_scene);
+                          moveit_msgs::msg::PlanningScene& planning_scene);
 
 void init_planning_scene_monitor(py::module& m);
 

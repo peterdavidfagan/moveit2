@@ -41,7 +41,7 @@
 #include <pybind11/stl.h>
 #include <moveit_msgs/msg/robot_state.h>
 #include <moveit_msgs/msg/move_it_error_codes.h>
-#include <serialize_ros_msg.h>
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
 #include <moveit/planning_interface/planning_response.h>
 
 namespace py = pybind11;
@@ -51,12 +51,11 @@ namespace moveit_py
 namespace bind_planning_interface
 {
 
-std::shared_ptr<robot_trajectory::RobotTrajectory>
-get_motion_plan_response_trajectory(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
+std::shared_ptr<robot_trajectory::RobotTrajectory> get_motion_plan_response_trajectory(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
 
-py::object get_motion_plan_response_start_state(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
+moveit_msgs::msg::RobotState get_motion_plan_response_start_state(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
 
-py::object get_motion_plan_response_error_code(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
+moveit_msgs::msg::MoveItErrorCodes get_motion_plan_response_error_code(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
 
 double get_motion_plan_response_planning_time(std::shared_ptr<planning_interface::MotionPlanResponse>& response);
 

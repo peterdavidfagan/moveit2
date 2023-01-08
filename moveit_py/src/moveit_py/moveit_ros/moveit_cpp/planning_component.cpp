@@ -99,7 +99,7 @@ plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
 
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
               std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state,
-              std::optional<py::dict> pose_goal, std::optional<py::list> motion_plan_constraints)
+              std::optional<py::dict> pose_goal, std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints)
 {
   // check that no more than one argument is specified
   if (configuration_name && robot_state)
@@ -170,7 +170,7 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
       else
       {
         // convert to C++ PoseStamped object
-        geometry_msgs::msg::PoseStamped pose_goal_cpp = PoseStampedToCpp(pose_dict["pose"]);
+        geometry_msgs::msg::PoseStamped pose_goal_cpp = moveit_py::pybind11_utils::PoseStampedToCpp(pose_dict["pose"]);
 
         return planning_component->setGoal(pose_goal_cpp, link_name);
       }
@@ -185,22 +185,22 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
   else
   {
     // iterate through list of constraints and convert to C++
-    std::vector<moveit_msgs::msg::Constraints> constraints_vec_cpp;
-    py::list constraints = motion_plan_constraints.value();
-    py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-    for (int i = 0; i < py::len(constraints); i++)
-    {
-      // convert python object to cpp constraints message
-      moveit_msgs::msg::Constraints constraints_cpp;
-      py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(constraints[i]);
-      deserializeMsg(serialized_msg, constraints_cpp);
+    // std::vector<moveit_msgs::msg::Constraints> constraints_vec_cpp;
+    std::vector<moveit_msgs::msg::Constraints> constraints = motion_plan_constraints.value();
+    // py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
+    // for (int i = 0; i < py::len(constraints); i++)
+    //{
+    //  convert python object to cpp constraints message
+    //  moveit_msgs::msg::Constraints constraints_cpp;
+    //  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(constraints[i]);
+    // deserializeMsg(serialized_msg, constraints_cpp);
 
-      // moveit_msgs::msg::Constraints constraints_cpp = ConstraintsToCpp(constraints[i]);
-      constraints_vec_cpp.push_back(constraints_cpp);
-    }
+    // moveit_msgs::msg::Constraints constraints_cpp = ConstraintsToCpp(constraints[i]);
+    //  constraints_vec_cpp.push_back(constraints_cpp);
+    //}
 
     // set the goal using planning component
-    return planning_component->setGoal(constraints_vec_cpp);
+    return planning_component->setGoal(constraints);
   }
 }
 
@@ -229,17 +229,6 @@ bool set_start_state(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_co
   {
     return planning_component->setStartState(*robot_state);
   }
-}
-
-bool set_path_constraints(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
-                          py::object path_constraints)
-{
-  moveit_msgs::msg::Constraints path_constraints_cpp;
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(path_constraints);
-  deserializeMsg(serialized_msg, path_constraints_cpp);
-
-  return planning_component->setPathConstraints(path_constraints_cpp);
 }
 
 void init_plan_request_parameters(py::module& m)
@@ -357,7 +346,7 @@ void init_planning_component(py::module& m)
       // goal state methods
       .def("set_goal",
            py::overload_cast<std::shared_ptr<moveit_cpp::PlanningComponent>&, std::optional<std::string>,
-                             std::optional<moveit::core::RobotState>, std::optional<py::dict>, std::optional<py::list>>(
+                             std::optional<moveit::core::RobotState>, std::optional<py::dict>, std::optional<std::vector<moveit_msgs::msg::Constraints>>>(
                &moveit_py::bind_planning_component::set_goal),
            py::arg("configuration_name") = nullptr, py::arg("robot_state") = nullptr, py::arg("pose_goal") = nullptr,
            py::arg("motion_plan_constraints") = nullptr,
@@ -382,8 +371,8 @@ void init_planning_component(py::module& m)
       	       plan_parameters (moveit_py.core.PlanParameters): The parameters to use for planning.
       	   )")
 
-      .def("set_path_constraints", &moveit_py::bind_planning_component::set_path_constraints,
-           py::arg("path_constraints"), py::return_value_policy::move,
+      .def("set_path_constraints", &moveit_cpp::PlanningComponent::setPathConstraints, py::arg("path_constraints"),
+           py::return_value_policy::move,
            R"(
            Set the path constraints generated from a moveit msg Constraints.
            Args:

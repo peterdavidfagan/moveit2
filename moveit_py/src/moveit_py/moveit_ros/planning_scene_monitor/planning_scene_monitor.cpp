@@ -80,21 +80,14 @@ void LockedPlanningSceneContextManagerRW::locked_planning_scene_rw_exit_(const p
   ls_rw_.reset();
 }
 
+// TODO: simplify with typecaster
 void apply_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>& planning_scene_monitor,
-                          py::object& planning_scene)
+                          moveit_msgs::msg::PlanningScene& planning_scene)
 {
-  // convert python object to C++ object (use serialization for now)
-  moveit_msgs::msg::PlanningScene planning_scene_cpp;
-
-  // TODO (peterdavidfagan): replace with copy method which is much faster
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(planning_scene);
-  deserializeMsg(serialized_msg, planning_scene_cpp);
-
   // lock planning scene
   {
     planning_scene_monitor::LockedPlanningSceneRW scene(planning_scene_monitor);
-    scene->usePlanningSceneMsg(planning_scene_cpp);
+    scene->usePlanningSceneMsg(planning_scene);
   }
 }
 

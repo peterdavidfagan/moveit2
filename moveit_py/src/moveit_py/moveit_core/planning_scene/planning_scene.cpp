@@ -35,62 +35,27 @@
 /* Author: Peter David Fagan */
 
 #include "planning_scene.h"
+#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
+#include <pybind11/operators.h>
 
 namespace moveit_py
 {
 namespace bind_planning_scene
 {
 
-void apply_planning_scene_world(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                                py::object& planning_scene_world_msg)
-{
-  moveit_msgs::msg::PlanningSceneWorld planning_scene_world_cpp;
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(planning_scene_world_msg);
-  deserializeMsg(serialized_msg, planning_scene_world_cpp);
-  planning_scene->processPlanningSceneWorldMsg(planning_scene_world_cpp);
-}
-
 void apply_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                            py::object& collision_object_msg, std::optional<py::object>& color_msg)
+                            moveit_msgs::msg::CollisionObject& collision_object_msg,
+                            std::optional<moveit_msgs::msg::ObjectColor> color_msg)
 {
-  // convert collision object message to cpp equivalent
-  moveit_msgs::msg::CollisionObject collision_object_cpp = CollisionObjectToCpp(collision_object_msg);
-
   // apply collision object
-  planning_scene->processCollisionObjectMsg(collision_object_cpp);
+  planning_scene->processCollisionObjectMsg(collision_object_msg);
 
   // check if color message is provided
   if (color_msg.has_value())
   {
-    // convert color message to cpp equivalent (serialization method used for now)
-    moveit_msgs::msg::ObjectColor color_cpp;
-    py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-    py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(color_msg);
-    deserializeMsg(serialized_msg, color_cpp);
-
     // set object color
-    planning_scene->setObjectColor(color_cpp.id, color_cpp.color);
+    planning_scene->setObjectColor(color_msg.value().id, color_msg.value().color);
   }
-}
-
-void apply_attached_collision_object(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                                     py::object& attached_collision_object)
-{
-  moveit_msgs::msg::AttachedCollisionObject attached_collision_object_cpp;
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(attached_collision_object);
-  deserializeMsg(serialized_msg, attached_collision_object_cpp);
-  planning_scene->processAttachedCollisionObjectMsg(attached_collision_object_cpp);
-}
-
-void apply_octomap(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& octomap)
-{
-  octomap_msgs::msg::Octomap octomap_cpp;
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(octomap);
-  deserializeMsg(serialized_msg, octomap_cpp);
-  planning_scene->processOctomapMsg(octomap_cpp);
 }
 
 Eigen::MatrixXd get_frame_transform(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
@@ -100,61 +65,11 @@ Eigen::MatrixXd get_frame_transform(std::shared_ptr<planning_scene::PlanningScen
   return transformation.matrix();
 }
 
-py::object get_planning_scene_msg(std::shared_ptr<planning_scene::PlanningScene>& planning_scene)
+moveit_msgs::msg::PlanningScene get_planning_scene_msg(std::shared_ptr<planning_scene::PlanningScene>& planning_scene)
 {
   moveit_msgs::msg::PlanningScene planning_scene_msg;
   planning_scene->getPlanningSceneMsg(planning_scene_msg);
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = serializeMsg(planning_scene_msg);
-
-  py::module_ moveit_msgs_planning_scene = py::module::import("moveit_msgs.msg._planning_scene");
-  py::object planning_scene_msg_py = moveit_msgs_planning_scene.attr("PlanningScene")();
-  return rclpy_serialization.attr("deserialize_message")(serialized_msg, planning_scene_msg_py);
-}
-
-bool is_path_valid(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                   robot_trajectory::RobotTrajectory& robot_trajectory, std::string& group, bool verbose)
-{
-  return planning_scene->isPathValid(robot_trajectory, group, verbose, nullptr);
-}
-
-bool is_state_colliding(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, std::string group, bool verbose)
-{
-  return planning_scene->isStateColliding(group, verbose);
-}
-
-bool is_state_colliding(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                        const moveit::core::RobotState& robot_state, const std::string& group, bool verbose)
-{
-  return planning_scene->isStateColliding(robot_state, group, verbose);
-}
-
-bool is_state_constrained(std::shared_ptr<planning_scene::PlanningScene>& planning_scene,
-                          const moveit::core::RobotState& robot_state, py::object constraints, bool verbose)
-{
-  moveit_msgs::msg::Constraints constraints_cpp = ConstraintsToCpp(constraints);
-  return planning_scene->isStateConstrained(robot_state, constraints_cpp, verbose);
-}
-
-moveit::core::RobotState& get_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene)
-{
-  return planning_scene->getCurrentStateNonConst();
-}
-
-void set_current_state(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, py::object& robot_state)
-{
-  const moveit::core::RobotState robot_state_cpp = robot_state.cast<const moveit::core::RobotState>();
-  planning_scene->setCurrentState(robot_state_cpp);
-}
-
-void set_object_color(std::shared_ptr<planning_scene::PlanningScene>& planning_scene, const std::string& id,
-                      py::object& color)
-{
-  std_msgs::msg::ColorRGBA color_cpp;
-  py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(color);
-  deserializeMsg(serialized_msg, color_cpp);
-  planning_scene->setObjectColor(id, color_cpp);
+  return planning_scene_msg;
 }
 
 void init_planning_scene(py::module& m)
@@ -185,11 +100,19 @@ void init_planning_scene(py::module& m)
                     str: The frame in which planning is performed.
                     )")
 
-      .def_property("current_state", &planning_scene::PlanningScene::getCurrentState,
-                    &moveit_py::bind_planning_scene::set_current_state, py::return_value_policy::move,
-                    R"(
+      .def_property(
+          "current_state", &planning_scene::PlanningScene::getCurrentState,
+          py::overload_cast<const moveit_msgs::msg::RobotState&>(&planning_scene::PlanningScene::setCurrentState),
+          py::return_value_policy::move,
+          R"(
                     :py:class:`moveit_py.core.RobotState`: The current state of the robot.
                     )")
+
+      //.def_property("current_state", &planning_scene::PlanningScene::getCurrentState,
+      //              &moveit_py::bind_planning_scene::set_current_state, py::return_value_policy::move,
+      //              R"(
+      //              :py:class:`moveit_py.core.RobotState`: The current state of the robot.
+      //              )")
 
       .def_property("planning_scene_message", &moveit_py::bind_planning_scene::get_planning_scene_msg, nullptr,
                     py::return_value_policy::move)
@@ -235,15 +158,22 @@ void init_planning_scene(py::module& m)
            )")
 
       // writing to the planning scene
-      .def("apply_planning_scene_world", &moveit_py::bind_planning_scene::apply_planning_scene_world, py::arg("scene"),
+      .def("process_planning_scene_world", &planning_scene::PlanningScene::processPlanningSceneWorldMsg, py::arg("msg"),
            R"(
-           Apply a planning scene world message to the current planning scene.
-           Args:
-               scene (:py:class:`moveit_msgs.msg.PlanningSceneWorld`): The planning scene world message to apply.
-       )")
+	   Process a planning scene world message.
+	   Args:
+	       msg (:py:class:`moveit_msgs.msg.PlanningSceneWorld`): The planning scene world message.
+	   )")
+
+      //.def("apply_planning_scene_world", &moveit_py::bind_planning_scene::apply_planning_scene_world, py::arg("scene"),
+      //     R"(
+      //     Apply a planning scene world message to the current planning scene.
+      //     Args:
+      //         scene (:py:class:`moveit_msgs.msg.PlanningSceneWorld`): The planning scene world message to apply.
+      // )")
 
       .def("apply_collision_object", &moveit_py::bind_planning_scene::apply_collision_object,
-           py::arg("collision_object_msg"), py::arg("color_msg").none(true) = py::none(),
+           py::arg("collision_object_msg"), py::arg("color_msg") = nullptr,
            R"(
            Apply a collision object to the planning scene.
            Args:
@@ -251,7 +181,7 @@ void init_planning_scene(py::module& m)
            color (moveit_msgs.msg.ObjectColor, optional): The color of the collision object. Defaults to None if not specified.
            )")
 
-      .def("set_object_color", &moveit_py::bind_planning_scene::set_object_color, py::arg("object_id"),
+      .def("set_object_color", &planning_scene::PlanningScene::setObjectColor, py::arg("object_id"),
            py::arg("color_msg"), R"(
 	   Set the color of a collision object.
 	   Args:
@@ -259,7 +189,7 @@ void init_planning_scene(py::module& m)
 	       color (std_msgs.msg.ObjectColor): The color of the collision object.
 	   )")
 
-      .def("apply_attached_collision_object", &moveit_py::bind_planning_scene::apply_attached_collision_object,
+      .def("process_attached_collision_object", &planning_scene::PlanningScene::processAttachedCollisionObjectMsg,
            py::arg("object"),
            R"(
            Apply an attached collision object to the planning scene.
@@ -267,7 +197,9 @@ void init_planning_scene(py::module& m)
                object (moveit_msgs.msg.AttachedCollisionObject): The attached collision object to apply to the planning scene.
            )")
 
-      .def("apply_octomap", &moveit_py::bind_planning_scene::apply_octomap,
+      .def("process_octomap",
+           py::overload_cast<const octomap_msgs::msg::Octomap&>(&planning_scene::PlanningScene::processOctomapMsg),
+           py::arg("msg"),
            R"(
            Apply an octomap to the planning scene.
            Args:
@@ -282,8 +214,7 @@ void init_planning_scene(py::module& m)
 
       // checking state validity
       .def("is_state_colliding",
-           py::overload_cast<std::shared_ptr<planning_scene::PlanningScene>&, std::string, bool>(
-               &moveit_py::bind_planning_scene::is_state_colliding),
+           py::overload_cast<const std::string&, bool>(&planning_scene::PlanningScene::isStateColliding),
            py::arg("joint_model_group_name"), py::arg("verbose") = false,
            R"(
            Check if the robot state is in collision.
@@ -295,8 +226,8 @@ void init_planning_scene(py::module& m)
            )")
 
       .def("is_state_colliding",
-           py::overload_cast<std::shared_ptr<planning_scene::PlanningScene>&, const moveit::core::RobotState&,
-                             const std::string&, bool>(&moveit_py::bind_planning_scene::is_state_colliding),
+           py::overload_cast<const moveit::core::RobotState&, const std::string&, bool>(
+               &planning_scene::PlanningScene::isStateColliding, py::const_),
            py::arg("robot_state"), py::arg("joint_model_group_name"), py::arg("verbose") = false,
            R"(
            Check if the robot state is in collision.
@@ -308,8 +239,10 @@ void init_planning_scene(py::module& m)
                bool: True if the robot state is in collision, false otherwise.
            )")
 
-      .def("is_state_constrained", &moveit_py::bind_planning_scene::is_state_constrained, py::arg("state"),
-           py::arg("constraints"), py::arg("verbose") = false,
+      .def("is_state_constrained",
+           py::overload_cast<const moveit::core::RobotState&, const moveit_msgs::msg::Constraints&, bool>(
+               &planning_scene::PlanningScene::isStateConstrained, py::const_),
+           py::arg("state"), py::arg("constraints"), py::arg("verbose") = false,
            R"(
            Check if the robot state fulfills the passed constraints
            Args:
@@ -320,15 +253,19 @@ void init_planning_scene(py::module& m)
                bool: true if state is contrained otherwise false.
            )")
 
-      .def("is_path_valid", &moveit_py::bind_planning_scene::is_path_valid, py::arg("path"),
-           py::arg("joint_model_group_name"), py::arg("verbose") = false,
+      .def("is_path_valid",
+           py::overload_cast<const robot_trajectory::RobotTrajectory&, const std::string&, bool,
+                             std::vector<std::size_t>*>(&planning_scene::PlanningScene::isPathValid, py::const_),
+           py::arg("trajectory"), py::arg("joint_model_group_name"), py::arg("verbose") = false,
+           py::arg("invalid_index") = nullptr,
            R"(
            Check if a given path is valid. 
            Each state is checked for validity (collision avoidance and feasibility)
            Args:
-               path (:py:class:`moveit_py.core.RobotTrajectory`): The trajectory to check.
+               trajectory (:py:class:`moveit_py.core.RobotTrajectory`): The trajectory to check.
                joint_model_group_name (str): The joint model group to check the path against.
                verbose (bool): 
+	       invalid_index (list):
            Returns:
                bool: true if the path is valid otherwise false.
            )")

@@ -43,36 +43,40 @@
 
 namespace py = pybind11;
 
-geometry_msgs::msg::PoseStamped PoseStampedToCpp(py::object pose_stamped);
+namespace moveit_py
+{
+namespace pybind11_utils
+{
+  geometry_msgs::msg::PoseStamped PoseStampedToCpp(py::object pose_stamped);
 
-// TODO(peterdavidfagan): consider creating typecaster
-geometry_msgs::msg::Pose PoseToCpp(py::object pose);
-py::object PoseToPy(geometry_msgs::msg::Pose pose);
+  // TODO(peterdavidfagan): consider creating typecaster
+  geometry_msgs::msg::Pose PoseToCpp(py::object pose);
+  py::object PoseToPy(geometry_msgs::msg::Pose pose);
 
-geometry_msgs::msg::Point PointToCpp(py::object point);
+  geometry_msgs::msg::Point PointToCpp(py::object point);
 
-geometry_msgs::msg::Vector3 Vector3ToCpp(py::object vector3);
+  geometry_msgs::msg::Vector3 Vector3ToCpp(py::object vector3);
 
-geometry_msgs::msg::Quaternion QuaternionToCpp(py::object quaternion);
+  geometry_msgs::msg::Quaternion QuaternionToCpp(py::object quaternion);
 
-shape_msgs::msg::SolidPrimitive SolidPrimitiveToCpp(py::object primitive);
+  shape_msgs::msg::SolidPrimitive SolidPrimitiveToCpp(py::object primitive);
 
-shape_msgs::msg::MeshTriangle MeshTriangleToCpp(py::object mesh_triangle);
+  shape_msgs::msg::MeshTriangle MeshTriangleToCpp(py::object mesh_triangle);
 
-shape_msgs::msg::Mesh MeshToCpp(py::object mesh);
+  shape_msgs::msg::Mesh MeshToCpp(py::object mesh);
 
-moveit_msgs::msg::BoundingVolume BoundingVolumeToCpp(py::object bounding_volume);
+  moveit_msgs::msg::BoundingVolume BoundingVolumeToCpp(py::object bounding_volume);
 
-moveit_msgs::msg::JointConstraint JointConstraintToCpp(py::object joint_constraint);
+  moveit_msgs::msg::JointConstraint JointConstraintToCpp(py::object joint_constraint);
 
-moveit_msgs::msg::PositionConstraint PositionConstraintToCpp(py::object position_constraint);
+  moveit_msgs::msg::PositionConstraint PositionConstraintToCpp(py::object position_constraint);
 
-moveit_msgs::msg::OrientationConstraint OrientationConstraintToCpp(py::object orientation_constraint);
+  moveit_msgs::msg::OrientationConstraint OrientationConstraintToCpp(py::object orientation_constraint);
 
-moveit_msgs::msg::VisibilityConstraint VisibilityConstraintToCpp(py::object visibility_constraint);
+  moveit_msgs::msg::VisibilityConstraint VisibilityConstraintToCpp(py::object visibility_constraint);
 
-moveit_msgs::msg::CollisionObject CollisionObjectToCpp(py::object collision_object);
+  moveit_msgs::msg::CollisionObject CollisionObjectToCpp(py::object collision_object);
 
-moveit_msgs::msg::Constraints ConstraintsToCpp(py::object constraints);
-
-// TODO (peterdavidfagan): come up with a more clever way of casting python rosmsg to cpp rosmsg
+  moveit_msgs::msg::Constraints ConstraintsToCpp(py::object constraints);
+}
+}  // namespace moveit_py

@@ -35,8 +35,12 @@
 /* Author: Peter David Fagan */
 
 #include <list>
-#include "copy_ros_msg.h"
+#include <moveit_py/pybind11_utils/copy_ros_msg.h>
 
+namespace moveit_py
+{
+namespace pybind11_utils
+{
 // Ros Message Copy Definitions (Note: copying faster than serialize/deserialize)
 
 geometry_msgs::msg::PoseStamped PoseStampedToCpp(py::object pose_stamped)
@@ -354,44 +358,5 @@ moveit_msgs::msg::Constraints ConstraintsToCpp(py::object constraints)
 
   return constraints_cpp;
 }
-
-// TODO (peterdavidfagan): think of a more clever way to perform type cast of ros msgs from python -> cpp
-// it is possible to serialize/deserialize but this is slower than just copying data.
-
-// define mapping from string to pointer creation for standard types
-// auto convert_message(py::object& python_msg)
-//{
-// construct string outlining the message type
-//  std::string module_name = python_msg.attr("__module__").cast<std::string>();
-//  std::string module_name_parsed = module_name.substr(0, module_name.find('.'));
-//  std::string msg_name = python_msg.attr("__class__").attr("__name__").cast<std::string>();
-//  std::string msg_type_str = module_name_parsed + "::" + "msg" + "::" + msg_name;
-
-// Create C++ equivalent of message type
-//  auto rosmsg = rosmsg_map[msg_type_str].create_message();
-
-// iterate through each member of python class to assign members to C++
-// object
-//  auto field_map = python_msg.attr("get_fields_and_field_types")().cast<std::map<std::string, std::string>>();
-
-// iterate through all elements of created message
-//  for (auto& field : field_map)
-//  {
-// if the member is a standard data type cast to C++ equivalent
-// type and assign as variable in C++ object
-//    if (standard_data_types.find(field.second) != standard_data_types.end())
-//    {
-// assign variable in C++ object
-//      rosmsg[field.first.c_str()] = python_msg.attr(field.first.c_str()).cast<standard_data_types[field.second]>();
-//    }
-// else create C++ object of the same type as Python class and
-// recursively call this function on the member
-//    else
-//    {
-// create C++ object of the same type as Python class
-//      rosmsg[field.first] = convert_message(python_msg.attr(field.first);
-//    }
-//  }
-
-//  return rosmsg;
-//}_
+}  // namespace pybind11_utils
+}  // namespace moveit_py
