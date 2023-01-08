@@ -66,8 +66,8 @@ void update(std::shared_ptr<moveit::core::RobotState>& robot_state, bool force, 
 
 Eigen::MatrixXd get_frame_transform(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string& frame_id)
 {
-  bool* frame_found;
-  auto transformation = robot_state->getFrameTransform(frame_id, frame_found);
+  bool frame_found;
+  auto transformation = robot_state->getFrameTransform(frame_id, &frame_found);
   return transformation.matrix();
 }
 
