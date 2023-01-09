@@ -35,7 +35,7 @@
 /* Author: Peter David Fagan */
 
 #include "planning_scene.h"
-#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
+#include <moveit_py/moveit_py_utils/ros_msg_typecasters.h>
 #include <pybind11/operators.h>
 
 namespace moveit_py

@@ -37,8 +37,8 @@
 #pragma once
 
 #include <pybind11/pybind11.h>
-#include <moveit_py/pybind11_utils/copy_ros_msg.h>
-#include <moveit_py/pybind11_utils/ros_msg_typecasters.h>
+#include <moveit_py/moveit_py_utils/copy_ros_msg.h>
+#include <moveit_py/moveit_py_utils/ros_msg_typecasters.h>
 #include <rclcpp/rclcpp.hpp>
 #include <moveit_msgs/msg/planning_scene.hpp>
 #include <moveit_msgs/srv/apply_planning_scene.hpp>

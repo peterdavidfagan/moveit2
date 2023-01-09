@@ -35,11 +35,11 @@
 /* Author: Peter David Fagan */
 
 #include <list>
-#include <moveit_py/pybind11_utils/copy_ros_msg.h>
+#include <moveit_py/moveit_py_utils/copy_ros_msg.h>
 
 namespace moveit_py
 {
-namespace pybind11_utils
+namespace moveit_py_utils
 {
 // Ros Message Copy Definitions (Note: copying faster than serialize/deserialize)
 
@@ -358,5 +358,5 @@ moveit_msgs::msg::Constraints ConstraintsToCpp(const py::object& constraints)
 
   return constraints_cpp;
 }
-}  // namespace pybind11_utils
+}  // namespace moveit_py_utils
 }  // namespace moveit_py

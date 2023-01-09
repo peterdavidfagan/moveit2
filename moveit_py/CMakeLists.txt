@@ -12,7 +12,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11_vendor REQUIRED)
 find_package(pybind11 REQUIRED)
 
-add_subdirectory(src/moveit_py/pybind11_utils)
+add_subdirectory(src/moveit_py/moveit_py_utils)
 
 ament_python_install_package(${PROJECT_NAME})
 
@@ -35,6 +35,7 @@ pybind11_add_module(core
 	src/moveit_py/moveit_core/robot_model/robot_model.cpp
 	src/moveit_py/moveit_core/robot_state/robot_state.cpp
 	src/moveit_py/moveit_core/robot_trajectory/robot_trajectory.cpp
+	src/moveit_py/moveit_py_utils/src/copy_ros_msg.cpp
 	)
 target_link_libraries(core PRIVATE moveit_ros_planning::moveit_cpp
 				   rclcpp::rclcpp
@@ -45,7 +46,7 @@ target_link_libraries(core PRIVATE moveit_ros_planning::moveit_cpp
 				   moveit_core::moveit_utils
 				   moveit_core::moveit_robot_model
 				   moveit_core::moveit_robot_state
-				   pybind11_utils)
+				   moveit_py_utils)
 configure_build_install_location(core)
 
 pybind11_add_module(planning
@@ -53,12 +54,13 @@ pybind11_add_module(planning
         src/moveit_py/moveit_ros/moveit_cpp/moveit_cpp.cpp
 	src/moveit_py/moveit_ros/moveit_cpp/planning_component.cpp
 	src/moveit_py/moveit_ros/planning_scene_monitor/planning_scene_monitor.cpp
+	src/moveit_py/moveit_py_utils/src/copy_ros_msg.cpp
 	)
 target_link_libraries(planning PRIVATE moveit_ros_planning::moveit_cpp
 				       moveit_ros_planning::moveit_planning_scene_monitor
 				       moveit_core::moveit_utils
 				       rclcpp::rclcpp
-				       pybind11_utils)
+				       moveit_py_utils)
 configure_build_install_location(planning)
 
 ament_package()

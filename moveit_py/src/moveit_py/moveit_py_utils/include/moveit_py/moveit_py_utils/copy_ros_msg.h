@@ -45,7 +45,7 @@ namespace py = pybind11;
 
 namespace moveit_py
 {
-namespace pybind11_utils
+namespace moveit_py_utils
 {
 geometry_msgs::msg::PoseStamped PoseStampedToCpp(const py::object& pose_stamped);
 
@@ -78,5 +78,5 @@ moveit_msgs::msg::VisibilityConstraint VisibilityConstraintToCpp(const py::objec
 moveit_msgs::msg::CollisionObject CollisionObjectToCpp(const py::object& collision_object);
 
 moveit_msgs::msg::Constraints ConstraintsToCpp(const py::object& constraints);
-}  // namespace pybind11_utils
+}  // namespace moveit_py_utils
 }  // namespace moveit_py

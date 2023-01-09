@@ -39,7 +39,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
-#include <moveit_py/pybind11_utils/copy_ros_msg.h>
+#include <moveit_py/moveit_py_utils/copy_ros_msg.h>
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <moveit/robot_state/robot_state.h>
 

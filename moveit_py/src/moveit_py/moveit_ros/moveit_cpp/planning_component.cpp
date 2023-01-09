@@ -170,7 +170,7 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
       else
       {
         // convert to C++ PoseStamped object
-        geometry_msgs::msg::PoseStamped pose_goal_cpp = moveit_py::pybind11_utils::PoseStampedToCpp(pose_dict["pose"]);
+        geometry_msgs::msg::PoseStamped pose_goal_cpp = moveit_py::moveit_py_utils::PoseStampedToCpp(pose_dict["pose"]);
 
         return planning_component->setGoal(pose_goal_cpp, link_name);
       }
