@@ -70,14 +70,11 @@ void init_robot_model(py::module& m)
 
              // Read in SRDF
              srdf::Model srdf_model;
-             srdf_model.initFile(*urdf_model, srdf_xml_path.c_str());
-
-             // TODO (peterdavidfagan): revise the below.
-             srdf::ModelConstSharedPtr srdf_model_;
-             srdf_model_ = std::make_shared<const srdf::Model>(std::move(srdf_model));
+             srdf_model.initFile(*urdf_model, srdf_xml_path);
 
              // Instantiate robot model
-             return std::make_shared<moveit::core::RobotModel>(urdf_model, srdf_model_);
+             return std::make_shared<moveit::core::RobotModel>(
+                 urdf_model, std::make_shared<const srdf::Model>(std::move(srdf_model)));
            }),
            py::arg("urdf_xml_path"), py::arg("srdf_xml_path"),
            R"(

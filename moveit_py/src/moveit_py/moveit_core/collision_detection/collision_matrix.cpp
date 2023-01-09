@@ -41,7 +41,7 @@ namespace moveit_py
 namespace bind_collision_detection
 {
 std::pair<bool, collision_detection::AllowedCollision::Type>
-get_entry(std::shared_ptr<collision_detection::AllowedCollisionMatrix> acm, const std::string& name1,
+get_entry(const std::shared_ptr<collision_detection::AllowedCollisionMatrix>& acm, const std::string& name1,
           const std::string& name2)
 {
   // check acm for collision

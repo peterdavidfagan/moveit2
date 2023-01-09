@@ -56,8 +56,7 @@ Eigen::MatrixXd get_frame_transform(std::shared_ptr<moveit::core::RobotState>& r
 Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotState>& robot_state,
                                           std::string& link_name);
 
-geometry_msgs::msg::Pose get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name);
-// py::object get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name);
+geometry_msgs::msg::Pose get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, const std::string& link_name);
 
 Eigen::VectorXd copy_joint_group_positions(std::shared_ptr<moveit::core::RobotState>& robot_state,
                                            const std::string& joint_model_group_name);
@@ -66,11 +65,8 @@ Eigen::VectorXd copy_joint_group_velocities(std::shared_ptr<moveit::core::RobotS
 Eigen::VectorXd copy_joint_group_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state,
                                                const std::string& joint_model_group_name);
 
-bool set_from_ik(std::shared_ptr<moveit::core::RobotState>& robot_state, const std::string& joint_model_group_name,
-                 geometry_msgs::msg::Pose& geometry_pose, const std::string& tip_name, double timeout);
-
 Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_state,
-                             const std::string& joint_model_group_name, const std::string link_model_name,
+                             const std::string& joint_model_group_name, const std::string& link_model_name,
                              const Eigen::Vector3d& reference_point_position, bool use_quaternion_representation);
 
 Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_state,

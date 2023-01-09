@@ -41,7 +41,7 @@ namespace moveit_py
 namespace bind_moveit_cpp
 {
 std::shared_ptr<moveit_cpp::PlanningComponent>
-get_planning_component(std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp_ptr, std::string planning_component)
+get_planning_component(std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp_ptr, const std::string& planning_component)
 {
   return std::make_shared<moveit_cpp::PlanningComponent>(planning_component, moveit_cpp_ptr);
 }
@@ -54,8 +54,8 @@ void init_moveit_py(py::module& m)
   The MoveItPy class is the main interface to the MoveIt Python API. It is a wrapper around the MoveIt C++ API.
 									     )")
 
-      .def(py::init([](std::string node_name, std::string launch_params_filepath, py::object config_dict,
-                       bool provide_planning_service) {
+      .def(py::init([](const std::string& node_name, const std::string& launch_params_filepath,
+                       const py::object& config_dict, bool provide_planning_service) {
              static const rclcpp::Logger LOGGER = rclcpp::get_logger("moveit_cpp_initializer");
 
              RCLCPP_INFO(LOGGER, "Initialize rclcpp");
@@ -136,7 +136,7 @@ void init_moveit_py(py::module& m)
           )")
 
       .def(
-          "shutdown", [](std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp) { rclcpp::shutdown(); },
+          "shutdown", [](std::shared_ptr<moveit_cpp::MoveItCpp>& /*moveit_cpp*/) { rclcpp::shutdown(); },
           R"(
           Shutdown the moveit_cpp node.
           )")

@@ -43,7 +43,7 @@ namespace pybind11_utils
 {
 // Ros Message Copy Definitions (Note: copying faster than serialize/deserialize)
 
-geometry_msgs::msg::PoseStamped PoseStampedToCpp(py::object pose_stamped)
+geometry_msgs::msg::PoseStamped PoseStampedToCpp(const py::object& pose_stamped)
 {
   // recreate instance in C++ using python object data
   geometry_msgs::msg::PoseStamped pose_stamped_cpp;
@@ -56,7 +56,7 @@ geometry_msgs::msg::PoseStamped PoseStampedToCpp(py::object pose_stamped)
   return pose_stamped_cpp;
 }
 
-geometry_msgs::msg::Pose PoseToCpp(py::object pose)
+geometry_msgs::msg::Pose PoseToCpp(const py::object& pose)
 {
   // recreate instance in C++ using python object data
   geometry_msgs::msg::Pose pose_cpp;
@@ -81,7 +81,7 @@ py::object PoseToPy(geometry_msgs::msg::Pose pose)
   return pose_py;
 }
 
-geometry_msgs::msg::Point PointToCpp(py::object point)
+geometry_msgs::msg::Point PointToCpp(const py::object& point)
 {
   // recreate instance in C++ using python object data
   geometry_msgs::msg::Point point_cpp;
@@ -92,7 +92,7 @@ geometry_msgs::msg::Point PointToCpp(py::object point)
   return point_cpp;
 }
 
-geometry_msgs::msg::Vector3 Vector3ToCpp(py::object vector3)
+geometry_msgs::msg::Vector3 Vector3ToCpp(const py::object& vector3)
 {
   // recreate instance in C++ using python object data
   geometry_msgs::msg::Vector3 vector3_cpp;
@@ -103,7 +103,7 @@ geometry_msgs::msg::Vector3 Vector3ToCpp(py::object vector3)
   return vector3_cpp;
 }
 
-geometry_msgs::msg::Quaternion QuaternionToCpp(py::object quaternion)
+geometry_msgs::msg::Quaternion QuaternionToCpp(const py::object& quaternion)
 {
   // recreate instance in C++ using python object data
   geometry_msgs::msg::Quaternion quaternion_cpp;
@@ -115,7 +115,7 @@ geometry_msgs::msg::Quaternion QuaternionToCpp(py::object quaternion)
   return quaternion_cpp;
 }
 
-shape_msgs::msg::SolidPrimitive SolidPrimitiveToCpp(py::object primitive)
+shape_msgs::msg::SolidPrimitive SolidPrimitiveToCpp(const py::object& primitive)
 {
   // recreate instance in C++ using python object data
   shape_msgs::msg::SolidPrimitive primitive_cpp;
@@ -129,7 +129,7 @@ shape_msgs::msg::SolidPrimitive SolidPrimitiveToCpp(py::object primitive)
   return primitive_cpp;
 }
 
-shape_msgs::msg::MeshTriangle MeshTriangleToCpp(py::object mesh_triangle)
+shape_msgs::msg::MeshTriangle MeshTriangleToCpp(const py::object& mesh_triangle)
 {
   // recreate instance in C++ using python object data
   shape_msgs::msg::MeshTriangle mesh_triangle_cpp;
@@ -140,7 +140,7 @@ shape_msgs::msg::MeshTriangle MeshTriangleToCpp(py::object mesh_triangle)
   return mesh_triangle_cpp;
 }
 
-shape_msgs::msg::Mesh MeshToCpp(py::object mesh)
+shape_msgs::msg::Mesh MeshToCpp(const py::object& mesh)
 {
   // recreate instance in C++ using python object data
   shape_msgs::msg::Mesh mesh_cpp;
@@ -158,7 +158,7 @@ shape_msgs::msg::Mesh MeshToCpp(py::object mesh)
   return mesh_cpp;
 }
 
-moveit_msgs::msg::BoundingVolume BoundingVolumeToCpp(py::object bounding_volume)
+moveit_msgs::msg::BoundingVolume BoundingVolumeToCpp(const py::object& bounding_volume)
 {
   // recreate instance in C++ using python object data
   moveit_msgs::msg::BoundingVolume bounding_volume_cpp;
@@ -192,7 +192,7 @@ moveit_msgs::msg::BoundingVolume BoundingVolumeToCpp(py::object bounding_volume)
   return bounding_volume_cpp;
 }
 
-moveit_msgs::msg::JointConstraint JointConstraintToCpp(py::object joint_constraint)
+moveit_msgs::msg::JointConstraint JointConstraintToCpp(const py::object& joint_constraint)
 {
   // recreate instance in C++ using python object data
   moveit_msgs::msg::JointConstraint joint_constraint_cpp;
@@ -205,7 +205,7 @@ moveit_msgs::msg::JointConstraint JointConstraintToCpp(py::object joint_constrai
   return joint_constraint_cpp;
 }
 
-moveit_msgs::msg::PositionConstraint PositionConstraintToCpp(py::object position_constraint)
+moveit_msgs::msg::PositionConstraint PositionConstraintToCpp(const py::object& position_constraint)
 {
   // recreate instance in C++ using python object data
   moveit_msgs::msg::PositionConstraint position_constraint_cpp;
@@ -218,7 +218,7 @@ moveit_msgs::msg::PositionConstraint PositionConstraintToCpp(py::object position
   return position_constraint_cpp;
 }
 
-moveit_msgs::msg::OrientationConstraint OrientationConstraintToCpp(py::object orientation_constraint)
+moveit_msgs::msg::OrientationConstraint OrientationConstraintToCpp(const py::object& orientation_constraint)
 {
   // recreate instance in C++ using python object data
   moveit_msgs::msg::OrientationConstraint orientation_constraint_cpp;
@@ -238,7 +238,7 @@ moveit_msgs::msg::OrientationConstraint OrientationConstraintToCpp(py::object or
   return orientation_constraint_cpp;
 }
 
-moveit_msgs::msg::VisibilityConstraint VisibilityConstraintToCpp(py::object visibility_constraint)
+moveit_msgs::msg::VisibilityConstraint VisibilityConstraintToCpp(const py::object& visibility_constraint)
 {
   // recreate instance in C++ using python object data
   moveit_msgs::msg::VisibilityConstraint visibility_constraint_cpp;
@@ -254,7 +254,7 @@ moveit_msgs::msg::VisibilityConstraint VisibilityConstraintToCpp(py::object visi
   return visibility_constraint_cpp;
 }
 
-moveit_msgs::msg::CollisionObject CollisionObjectToCpp(py::object collision_object)
+moveit_msgs::msg::CollisionObject CollisionObjectToCpp(const py::object& collision_object)
 {
   //  recreate instance in C++ using python object data
   moveit_msgs::msg::CollisionObject collision_object_cpp;
@@ -315,7 +315,7 @@ moveit_msgs::msg::CollisionObject CollisionObjectToCpp(py::object collision_obje
   return collision_object_cpp;
 }
 
-moveit_msgs::msg::Constraints ConstraintsToCpp(py::object constraints)
+moveit_msgs::msg::Constraints ConstraintsToCpp(const py::object& constraints)
 {
   // recreate instance in C++ using python object data
   moveit_msgs::msg::Constraints constraints_cpp;

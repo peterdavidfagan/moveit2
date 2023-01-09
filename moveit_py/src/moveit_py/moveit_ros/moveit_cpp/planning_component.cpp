@@ -184,23 +184,7 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
   // 4. set goal from motion_plan_constraints
   else
   {
-    // iterate through list of constraints and convert to C++
-    // std::vector<moveit_msgs::msg::Constraints> constraints_vec_cpp;
-    std::vector<moveit_msgs::msg::Constraints> constraints = motion_plan_constraints.value();
-    // py::module_ rclpy_serialization = py::module::import("rclpy.serialization");
-    // for (int i = 0; i < py::len(constraints); i++)
-    //{
-    //  convert python object to cpp constraints message
-    //  moveit_msgs::msg::Constraints constraints_cpp;
-    //  py::bytes serialized_msg = rclpy_serialization.attr("serialize_message")(constraints[i]);
-    // deserializeMsg(serialized_msg, constraints_cpp);
-
-    // moveit_msgs::msg::Constraints constraints_cpp = ConstraintsToCpp(constraints[i]);
-    //  constraints_vec_cpp.push_back(constraints_cpp);
-    //}
-
-    // set the goal using planning component
-    return planning_component->setGoal(constraints);
+    return planning_component->setGoal(motion_plan_constraints.value());
   }
 }
 
@@ -238,7 +222,7 @@ void init_plan_request_parameters(py::module& m)
                                                                                     R"(
 			     Planner parameters provided with a MotionPlanRequest.
 			     )")
-      .def(py::init([](std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp, std::string ns) {
+      .def(py::init([](std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp, const std::string& ns) {
         const rclcpp::Node::SharedPtr& node = moveit_cpp->getNode();
         moveit_cpp::PlanningComponent::PlanRequestParameters params;
         params.load(node, ns);
@@ -281,7 +265,7 @@ void init_multi_plan_request_parameters(py::module& m)
 			     Planner parameters provided with a MotionPlanRequest.
 			     )")
       .def(py::init([](std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp,
-                       const std::vector<std::string> planning_pipeline_names) {
+                       const std::vector<std::string>& planning_pipeline_names) {
         const rclcpp::Node::SharedPtr& node = moveit_cpp->getNode();
         moveit_cpp::PlanningComponent::MultiPipelinePlanRequestParameters params{ node, planning_pipeline_names };
         return params;

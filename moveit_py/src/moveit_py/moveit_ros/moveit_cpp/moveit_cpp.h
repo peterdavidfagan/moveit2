@@ -55,8 +55,6 @@ namespace moveit_py
 {
 namespace bind_moveit_cpp
 {
-std::shared_ptr<moveit_cpp::PlanningComponent>
-get_planning_component(std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp_ptr, std::string planning_component);
 void init_moveit_py(py::module& m);
 }  // namespace bind_moveit_cpp
 }  // namespace moveit_py

@@ -76,7 +76,7 @@ Eigen::MatrixXd get_global_link_transform(std::shared_ptr<moveit::core::RobotSta
   return transformation.matrix();
 }
 
-geometry_msgs::msg::Pose get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, std::string link_name)
+geometry_msgs::msg::Pose get_pose(std::shared_ptr<moveit::core::RobotState>& robot_state, const std::string& link_name)
 {
   Eigen::Isometry3d pose = robot_state->getGlobalLinkTransform(link_name);
   return tf2::toMsg(pose);
@@ -96,7 +96,7 @@ py::dict get_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_st
 void set_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_positions)
 {
   auto joint_positions_cpp = joint_positions.cast<std::map<std::string, double>>();
-  for (auto item : joint_positions_cpp)
+  for (const auto& item : joint_positions_cpp)
   {
     robot_state->setVariablePosition(item.first, item.second);
   }
@@ -116,7 +116,7 @@ py::dict get_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_s
 void set_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_velocities)
 {
   auto joint_velocities_cpp = joint_velocities.cast<std::map<std::string, double>>();
-  for (auto item : joint_velocities_cpp)
+  for (const auto& item : joint_velocities_cpp)
   {
     robot_state->setVariableVelocity(item.first, item.second);
   }
@@ -136,7 +136,7 @@ py::dict get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robo
 void set_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_accelerations)
 {
   auto joint_accelerations_cpp = joint_accelerations.cast<std::map<std::string, double>>();
-  for (auto item : joint_accelerations_cpp)
+  for (const auto& item : joint_accelerations_cpp)
   {
     robot_state->setVariableAcceleration(item.first, item.second);
   }
@@ -159,7 +159,7 @@ void set_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_state, p
   if (py::isinstance<py::dict>(joint_efforts))
   {
     auto joint_efforts_cpp = joint_efforts.cast<std::map<std::string, double>>();
-    for (auto item : joint_efforts_cpp)
+    for (const auto& item : joint_efforts_cpp)
     {
       robot_state->setVariableEffort(item.first, item.second);
     }
@@ -194,13 +194,6 @@ Eigen::VectorXd copy_joint_group_accelerations(std::shared_ptr<moveit::core::Rob
   return values;
 }
 
-bool set_from_ik(std::shared_ptr<moveit::core::RobotState>& robot_state, const std::string& joint_model_group_name,
-                 geometry_msgs::msg::Pose& geometry_pose, const std::string& tip_name, double timeout)
-{
-  const moveit::core::JointModelGroup* joint_model_group = robot_state->getJointModelGroup(joint_model_group_name);
-  return robot_state->setFromIK(joint_model_group, geometry_pose, tip_name, timeout);
-}
-
 Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_state,
                              const std::string& joint_model_group_name, const Eigen::Vector3d& reference_point_position)
 {
@@ -209,7 +202,7 @@ Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_st
 }
 
 Eigen::MatrixXd get_jacobian(std::shared_ptr<moveit::core::RobotState>& robot_state,
-                             const std::string& joint_model_group_name, const std::string link_model_name,
+                             const std::string& joint_model_group_name, const std::string& link_model_name,
                              const Eigen::Vector3d& reference_point_position, bool use_quaternion_representation)
 {
   Eigen::MatrixXd jacobian;
@@ -306,7 +299,7 @@ void init_robot_state(py::module& m)
            )")
 
       .def("get_jacobian",
-           py::overload_cast<std::shared_ptr<moveit::core::RobotState>&, const std::string&, const std::string,
+           py::overload_cast<std::shared_ptr<moveit::core::RobotState>&, const std::string&, const std::string&,
                              const Eigen::Vector3d&, bool>(&moveit_py::bind_robot_state::get_jacobian),
            py::arg("joint_model_group_name"), py::arg("link_name"), py::arg("reference_point_position"),
            py::arg("use_quaternion_representation") = false, py::return_value_policy::move,
@@ -442,9 +435,14 @@ void init_robot_state(py::module& m)
        )")
 
       // Setting state from inverse kinematics
-      .def("set_from_ik", &moveit_py::bind_robot_state::set_from_ik, py::arg("joint_model_group_name"),
-           py::arg("geometry_pose"), py::arg("tip_name"), py::arg("timeout") = 0.0,
-           R"(
+      .def(
+          "set_from_ik",
+          [](moveit::core::RobotState& robot_state, const std::string& group, const geometry_msgs::msg::Pose& pose,
+             const std::string& tip, double timeout) {
+            return robot_state.setFromIK(robot_state.getJointModelGroup(group), pose, tip, timeout);
+          },
+          py::arg("joint_model_group_name"), py::arg("geometry_pose"), py::arg("tip_name"), py::arg("timeout") = 0.0,
+          R"(
            Sets the state of the robot to the one that results from solving the inverse kinematics for the specified group.
            Args:
                joint_model_group_name (str): The name of the joint model group to set the state for.

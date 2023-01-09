@@ -54,34 +54,34 @@ read_write(const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene
   return LockedPlanningSceneContextManagerRW(planning_scene_monitor);
 };
 
-const planning_scene::PlanningSceneConstPtr& LockedPlanningSceneContextManagerRO::locked_planning_scene_ro_enter_() const
+const planning_scene::PlanningSceneConstPtr& LockedPlanningSceneContextManagerRO::lockedPlanningSceneRoEnter() const
 {
   return static_cast<const planning_scene_monitor::PlanningSceneMonitor*>(planning_scene_monitor_.get())
       ->getPlanningScene();
 }
 
-const planning_scene::PlanningScenePtr& LockedPlanningSceneContextManagerRW::locked_planning_scene_rw_enter_()
+const planning_scene::PlanningScenePtr& LockedPlanningSceneContextManagerRW::lockedPlanningSceneRwEnter()
 {
   return planning_scene_monitor_->getPlanningScene();
 }
 
-void LockedPlanningSceneContextManagerRO::locked_planning_scene_ro_exit_(const py::object& type,
-                                                                         const py::object& value,
-                                                                         const py::object& traceback)
+void LockedPlanningSceneContextManagerRO::lockedPlanningSceneRoExit(const py::object& /*type*/,
+                                                                    const py::object& /*value*/,
+                                                                    const py::object& /*traceback*/)
 {
   ls_ro_.reset();
 }
 
-void LockedPlanningSceneContextManagerRW::locked_planning_scene_rw_exit_(const py::object& type,
-                                                                         const py::object& value,
-                                                                         const py::object& traceback)
+void LockedPlanningSceneContextManagerRW::lockedPlanningSceneRwExit(const py::object& /*type*/,
+                                                                    const py::object& /*value*/,
+                                                                    const py::object& /*traceback*/)
 {
   ls_rw_.reset();
 }
 
 // TODO: simplify with typecaster
 void apply_planning_scene(std::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>& planning_scene_monitor,
-                          moveit_msgs::msg::PlanningScene& planning_scene)
+                          const moveit_msgs::msg::PlanningScene& planning_scene)
 {
   // lock planning scene
   {
@@ -154,14 +154,14 @@ void init_context_managers(py::module& m)
       )")
 
       .def("__enter__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRO::locked_planning_scene_ro_enter_,
+           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRO::lockedPlanningSceneRoEnter,
            R"(
            Special method that is used with the with statement, provides access to a locked plannning scene instance.
            Returns:
                :py:class:`moveit_py.core.PlanningScene`: The locked planning scene.
         )")
       .def("__exit__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRO::locked_planning_scene_ro_exit_,
+           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRO::lockedPlanningSceneRoExit,
            R"(
            Special method that is used with the with statement, releases the lock on the planning scene.
            )");
@@ -173,7 +173,7 @@ void init_context_managers(py::module& m)
       )")
 
       .def("__enter__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRW::locked_planning_scene_rw_enter_,
+           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRW::lockedPlanningSceneRwEnter,
            py::return_value_policy::take_ownership,
            R"(
            Special method that is used with the with statement, provides access to a locked plannning scene instance.
@@ -182,7 +182,7 @@ void init_context_managers(py::module& m)
            )")
 
       .def("__exit__",
-           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRW::locked_planning_scene_rw_exit_,
+           &moveit_py::bind_planning_scene_monitor::LockedPlanningSceneContextManagerRW::lockedPlanningSceneRwExit,
            R"(
            Special method that is used with the with statement, releases the lock on the planning scene.
            )");
