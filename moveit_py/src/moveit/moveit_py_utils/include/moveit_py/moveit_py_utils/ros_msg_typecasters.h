@@ -48,7 +48,7 @@ namespace moveit_py
 namespace moveit_py_utils
 {
 PYBIND11_EXPORT pybind11::object createMessage(const std::string& ros_msg_name);
-PYBIND11_EXPORT bool convertible(const pybind11::handle& h, const char* ros_msg_name);
+PYBIND11_EXPORT bool convertible(const pybind11::handle& h, const std::string ros_msg_name);
 }  // namespace moveit_py_utils
 }  // namespace moveit_py
 

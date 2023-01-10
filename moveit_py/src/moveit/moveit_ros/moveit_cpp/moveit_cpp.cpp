@@ -48,7 +48,7 @@ get_planning_component(std::shared_ptr<moveit_cpp::MoveItCpp>& moveit_cpp_ptr, c
 
 void init_moveit_py(py::module& m)
 {
-  auto utils = py::module::import("moveit_py.utils");
+  auto utils = py::module::import("moveit.utils");
 
   py::class_<moveit_cpp::MoveItCpp, std::shared_ptr<moveit_cpp::MoveItCpp>>(m, "MoveItPy", R"(
   The MoveItPy class is the main interface to the MoveIt Python API. It is a wrapper around the MoveIt C++ API.
@@ -69,7 +69,7 @@ void init_moveit_py(py::module& m)
              // and finally no supplied parameters.
              if (!config_dict.is(py::none()))
              {
-               auto utils = py::module::import("moveit_py.utils");
+               auto utils = py::module::import("moveit.utils");
                // TODO (peterdavidfagan): replace python method with C++ method
                std::string params_filepath =
                    utils.attr("create_params_file_from_dict")(config_dict, "moveit_py").cast<std::string>();

@@ -98,7 +98,7 @@ plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
 
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
               std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state,
-              std::optional<py::dict> pose_goal,
+              std::optional<geometry_msgs::msg::PoseStamped> pose_stamped_msg, std::optional<std::string> pose_link,
               std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints)
 {
   // check that no more than one argument is specified
@@ -106,29 +106,33 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
   {
     throw std::invalid_argument("Cannot specify both configuration name and robot state");
   }
-  else if (configuration_name && pose_goal)
+  else if (configuration_name && pose_stamped_msg)
   {
-    throw std::invalid_argument("Cannot specify both configuration name and pose goal");
+    throw std::invalid_argument("Cannot specify both configuration name and pose msg");
   }
   else if (configuration_name && motion_plan_constraints)
   {
     throw std::invalid_argument("Cannot specify both configuration name and motion plan constraints");
   }
-  else if (robot_state && pose_goal)
+  else if (robot_state && pose_stamped_msg)
   {
-    throw std::invalid_argument("Cannot specify both robot state and pose goal");
+    throw std::invalid_argument("Cannot specify both robot state and pose msg");
   }
   else if (robot_state && motion_plan_constraints)
   {
     throw std::invalid_argument("Cannot specify both robot state and motion plan constraints");
   }
-  else if (pose_goal && motion_plan_constraints)
+  else if (pose_stamped_msg && motion_plan_constraints)
   {
     throw std::invalid_argument("Cannot specify both pose goal and motion plan constraints");
   }
+  else if (pose_stamped_msg && !pose_link || !pose_stamped_msg && pose_link)
+  {
+    throw std::invalid_argument("Must specify both message and corresponding link");
+  }
 
   // check that at least one argument is specified
-  if (!configuration_name && !robot_state && !pose_goal && !motion_plan_constraints)
+  if (!configuration_name && !robot_state && !pose_stamped_msg && !pose_link && !motion_plan_constraints)
   {
     throw std::invalid_argument("Must specify at least one argument");
   }
@@ -144,42 +148,9 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
     return planning_component->setGoal(*robot_state);
   }
   // 3. set goal from pose_goal
-  else if (pose_goal)
+  else if (pose_stamped_msg && pose_link)
   {
-    // extract items from dictionary
-    try
-    {
-      py::dict pose_dict = pose_goal.value().cast<py::dict>();
-      std::string link_name = py::cast<std::string>(pose_dict["link_name"]);
-      if (py::isinstance<py::array_t<double>>(pose_dict["pose"]))
-      {
-        py::array_t<double> pose_array = pose_dict["pose"].cast<py::array_t<double>>();
-
-        py::buffer_info buf = pose_array.request();
-        double* ptr = (double*)buf.ptr;
-
-        geometry_msgs::msg::PoseStamped pose_goal_cpp;
-        pose_goal_cpp.header.frame_id = pose_dict["source_frame"].cast<std::string>();
-        pose_goal_cpp.pose.position.x = ptr[0];
-        pose_goal_cpp.pose.position.y = ptr[1];
-        pose_goal_cpp.pose.position.z = ptr[2];
-        pose_goal_cpp.pose.orientation.w = ptr[3];
-
-        return planning_component->setGoal(pose_goal_cpp, link_name);
-      }
-      else
-      {
-        // convert to C++ PoseStamped object
-        geometry_msgs::msg::PoseStamped pose_goal_cpp = moveit_py::moveit_py_utils::PoseStampedToCpp(pose_dict["pose"]);
-
-        return planning_component->setGoal(pose_goal_cpp, link_name);
-      }
-    }
-    // TODO catch specific errors
-    catch (...)
-    {
-      throw std::invalid_argument("Invalid pose_goal dictionary");
-    }
+    return planning_component->setGoal(pose_stamped_msg.value(), pose_link.value());
   }
   // 4. set goal from motion_plan_constraints
   else
@@ -330,17 +301,18 @@ void init_planning_component(py::module& m)
       // goal state methods
       .def("set_goal",
            py::overload_cast<std::shared_ptr<moveit_cpp::PlanningComponent>&, std::optional<std::string>,
-                             std::optional<moveit::core::RobotState>, std::optional<py::dict>,
-                             std::optional<std::vector<moveit_msgs::msg::Constraints>>>(
+                             std::optional<moveit::core::RobotState>, std::optional<geometry_msgs::msg::PoseStamped>,
+                             std::optional<std::string>, std::optional<std::vector<moveit_msgs::msg::Constraints>>>(
                &moveit_py::bind_planning_component::set_goal),
-           py::arg("configuration_name") = nullptr, py::arg("robot_state") = nullptr, py::arg("pose_goal") = nullptr,
-           py::arg("motion_plan_constraints") = nullptr,
+           py::arg("configuration_name") = nullptr, py::arg("robot_state") = nullptr,
+           py::arg("pose_stamped_msg") = nullptr, py::arg("pose_link"), py::arg("motion_plan_constraints") = nullptr,
            R"(
 	   Set the goal state for the planning component.
 	   Args:
 	       configuration_name (str): The name of the configuration to set the goal to.
 	       robot_state (moveit_py.core.RobotState): The state to set the goal to.
-	       pose_goal (dict): The pose goal to set the goal to.
+	       pose_stamped_msg (geometry_msgs.msg.PoseStamped): A PoseStamped ros message.
+	       pose_link (str): The name of the link for which the pose constraint is specified.
 	       motion_plan_constraints (list): The motion plan constraints to set the goal to.
 	   )")
 

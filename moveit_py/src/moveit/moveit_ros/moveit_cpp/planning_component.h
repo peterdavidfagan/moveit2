@@ -45,6 +45,8 @@
 #include <moveit/moveit_cpp/moveit_cpp.h>
 #include <moveit/moveit_cpp/planning_component.h>
 #include <moveit/moveit_cpp/plan_solutions.h>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <moveit_msgs/msg/constraints.hpp>
 
 #include "moveit_cpp.h"
 #include "../planning_scene_monitor/planning_scene_monitor.h"
@@ -65,7 +67,7 @@ plan(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
 
 bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
               std::optional<std::string> configuration_name, std::optional<moveit::core::RobotState> robot_state,
-              std::optional<py::dict> pose_goal,
+              std::optional<geometry_msgs::msg::PoseStamped> pose_stamped_msg, std::optional<std::string> pose_link,
               std::optional<std::vector<moveit_msgs::msg::Constraints>> motion_plan_constraints);
 
 bool set_start_state(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component,
