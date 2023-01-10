@@ -63,15 +63,15 @@ struct RosMsgTypeCaster
                                 serialized_msg.get_rcl_serialized_message().buffer_length);
 
     // get Python object type
-    const std::string ros_msg_name = rosidl_generator_traits::data_type<T>();
+    const std::string ros_msg_name = rosidl_generator_traits::name<T>();
 
-    // find delimiting '::' in ros_msg_name
-    std::size_t pos1 = ros_msg_name.find("::");
-    std::size_t pos2 = ros_msg_name.find("::", pos1 + 2);
+    // find delimiting '/' in ros_msg_name
+    std::size_t pos1 = ros_msg_name.find("/");
+    std::size_t pos2 = ros_msg_name.find("/", pos1 + 1);
     py::module m = py::module::import((ros_msg_name.substr(0, pos1) + ".msg").c_str());
 
     // retrieve type instance
-    py::object cls = m.attr(ros_msg_name.substr(pos2 + 2).c_str());
+    py::object cls = m.attr(ros_msg_name.substr(pos2 + 1).c_str());
 
     // deserialize into python object
     py::module rclpy = py::module::import("rclpy.serialization");
