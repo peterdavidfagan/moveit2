@@ -1,5 +1,6 @@
 add_library(moveit_py_utils SHARED
   src/copy_ros_msg.cpp
+  src/ros_msg_typecasters.cpp
 )
 
 target_include_directories(moveit_py_utils PUBLIC include)

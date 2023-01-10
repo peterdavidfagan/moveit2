@@ -43,6 +43,15 @@
 
 namespace py = pybind11;
 
+namespace moveit_py
+{
+namespace moveit_py_utils
+{
+PYBIND11_EXPORT pybind11::object createMessage(const std::string& ros_msg_name);
+PYBIND11_EXPORT bool convertible(const pybind11::handle& h, const char* ros_msg_name);
+}  // namespace moveit_py_utils
+}  // namespace moveit_py
+
 namespace pybind11
 {
 namespace detail
@@ -66,8 +75,8 @@ struct RosMsgTypeCaster
     const std::string ros_msg_name = rosidl_generator_traits::name<T>();
 
     // find delimiting '/' in ros_msg_name
-    std::size_t pos1 = ros_msg_name.find("/");
-    std::size_t pos2 = ros_msg_name.find("/", pos1 + 1);
+    std::size_t pos1 = ros_msg_name.find('/');
+    std::size_t pos2 = ros_msg_name.find('/', pos1 + 1);
     py::module m = py::module::import((ros_msg_name.substr(0, pos1) + ".msg").c_str());
 
     // retrieve type instance
@@ -83,6 +92,10 @@ struct RosMsgTypeCaster
   // Python -> C++
   bool load(handle src, bool /*convert*/)
   {
+    // check datatype of src
+    if (!moveit_py::moveit_py_utils::convertible(src, rosidl_generator_traits::name<T>()))
+      return false;
+
     // serialize src into python buffer
     py::module rclpy = py::module::import("rclpy.serialization");
     py::bytes bytes = rclpy.attr("serialize_message")(src);

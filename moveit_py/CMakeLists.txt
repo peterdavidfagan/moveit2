@@ -36,6 +36,7 @@ pybind11_add_module(core
 	src/moveit_py/moveit_core/robot_state/robot_state.cpp
 	src/moveit_py/moveit_core/robot_trajectory/robot_trajectory.cpp
 	src/moveit_py/moveit_py_utils/src/copy_ros_msg.cpp
+	src/moveit_py/moveit_py_utils/src/ros_msg_typecasters.cpp
 	)
 target_link_libraries(core PRIVATE moveit_ros_planning::moveit_cpp
 				   rclcpp::rclcpp
@@ -55,6 +56,7 @@ pybind11_add_module(planning
 	src/moveit_py/moveit_ros/moveit_cpp/planning_component.cpp
 	src/moveit_py/moveit_ros/planning_scene_monitor/planning_scene_monitor.cpp
 	src/moveit_py/moveit_py_utils/src/copy_ros_msg.cpp
+	src/moveit_py/moveit_py_utils/src/ros_msg_typecasters.cpp
 	)
 target_link_libraries(planning PRIVATE moveit_ros_planning::moveit_cpp
 				       moveit_ros_planning::moveit_planning_scene_monitor
