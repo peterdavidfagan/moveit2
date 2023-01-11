@@ -35,7 +35,6 @@
 /* Author: Peter David Fagan */
 
 #include "planning_component.h"
-#include <pybind11/functional.h>
 #include <memory>
 
 namespace moveit_py
@@ -150,12 +149,12 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
   // 3. set goal from pose_goal
   else if (pose_stamped_msg && pose_link)
   {
-    return planning_component->setGoal(pose_stamped_msg.value(), pose_link.value());
+    return planning_component->setGoal(*pose_stamped_msg, *pose_link);
   }
   // 4. set goal from motion_plan_constraints
   else
   {
-    return planning_component->setGoal(motion_plan_constraints.value());
+    return planning_component->setGoal(*motion_plan_constraints);
   }
 }
 
@@ -299,13 +298,14 @@ void init_planning_component(py::module& m)
            )")
 
       // goal state methods
-      .def("set_goal",
+      .def("set_goal_state",
            py::overload_cast<std::shared_ptr<moveit_cpp::PlanningComponent>&, std::optional<std::string>,
                              std::optional<moveit::core::RobotState>, std::optional<geometry_msgs::msg::PoseStamped>,
                              std::optional<std::string>, std::optional<std::vector<moveit_msgs::msg::Constraints>>>(
                &moveit_py::bind_planning_component::set_goal),
            py::arg("configuration_name") = nullptr, py::arg("robot_state") = nullptr,
-           py::arg("pose_stamped_msg") = nullptr, py::arg("pose_link"), py::arg("motion_plan_constraints") = nullptr,
+           py::arg("pose_stamped_msg") = nullptr, py::arg("pose_link") = nullptr,
+           py::arg("motion_plan_constraints") = nullptr,
            R"(
 	   Set the goal state for the planning component.
 	   Args:

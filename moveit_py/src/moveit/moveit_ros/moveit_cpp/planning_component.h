@@ -40,6 +40,7 @@
 #include <pybind11/eigen.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
+#include <pybind11/functional.h>
 #include <moveit_py/moveit_py_utils/copy_ros_msg.h>
 #include <moveit_py/moveit_py_utils/ros_msg_typecasters.h>
 #include <moveit/moveit_cpp/moveit_cpp.h>
