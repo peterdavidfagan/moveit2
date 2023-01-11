@@ -35,6 +35,7 @@
 /* Author: Peter David Fagan */
 
 #include "robot_state.h"
+#include <pybind11/stl.h>
 #include <moveit_py/moveit_py_utils/ros_msg_typecasters.h>
 #include <moveit_msgs/msg/robot_state.hpp>
 #include <moveit/robot_state/conversions.h>
@@ -82,9 +83,9 @@ geometry_msgs::msg::Pose get_pose(std::shared_ptr<moveit::core::RobotState>& rob
   return tf2::toMsg(pose);
 }
 
-py::dict get_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state)
+std::map<std::string, double> get_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state)
 {
-  py::dict joint_positions;
+  std::map<std::string, double> joint_positions;
   const std::vector<std::string>& variable_name = robot_state->getVariableNames();
   for (auto& name : variable_name)
   {
@@ -93,18 +94,18 @@ py::dict get_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_st
   return joint_positions;
 }
 
-void set_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_positions)
+void set_joint_positions(std::shared_ptr<moveit::core::RobotState>& robot_state,
+                         std::map<std::string, double>& joint_positions)
 {
-  auto joint_positions_cpp = joint_positions.cast<std::map<std::string, double>>();
-  for (const auto& item : joint_positions_cpp)
+  for (const auto& item : joint_positions)
   {
     robot_state->setVariablePosition(item.first, item.second);
   }
 }
 
-py::dict get_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state)
+std::map<std::string, double> get_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state)
 {
-  py::dict joint_velocity;
+  std::map<std::string, double> joint_velocity;
   const std::vector<std::string>& variable_name = robot_state->getVariableNames();
   for (auto& name : variable_name)
   {
@@ -113,18 +114,18 @@ py::dict get_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_s
   return joint_velocity;
 }
 
-void set_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_velocities)
+void set_joint_velocities(std::shared_ptr<moveit::core::RobotState>& robot_state,
+                          std::map<std::string, double>& joint_velocities)
 {
-  auto joint_velocities_cpp = joint_velocities.cast<std::map<std::string, double>>();
-  for (const auto& item : joint_velocities_cpp)
+  for (const auto& item : joint_velocities)
   {
     robot_state->setVariableVelocity(item.first, item.second);
   }
 }
 
-py::dict get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state)
+std::map<std::string, double> get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state)
 {
-  py::dict joint_acceleration;
+  std::map<std::string, double> joint_acceleration;
   const std::vector<std::string>& variable_name = robot_state->getVariableNames();
   for (auto& name : variable_name)
   {
@@ -133,18 +134,18 @@ py::dict get_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robo
   return joint_acceleration;
 }
 
-void set_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state, py::dict& joint_accelerations)
+void set_joint_accelerations(std::shared_ptr<moveit::core::RobotState>& robot_state,
+                             std::map<std::string, double>& joint_accelerations)
 {
-  auto joint_accelerations_cpp = joint_accelerations.cast<std::map<std::string, double>>();
-  for (const auto& item : joint_accelerations_cpp)
+  for (const auto& item : joint_accelerations)
   {
     robot_state->setVariableAcceleration(item.first, item.second);
   }
 }
 
-py::dict get_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_state)
+std::map<std::string, double> get_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_state)
 {
-  py::dict joint_effort;
+  std::map<std::string, double> joint_effort;
   const std::vector<std::string>& variable_name = robot_state->getVariableNames();
   for (auto& name : variable_name)
   {
@@ -153,20 +154,12 @@ py::dict get_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_stat
   return joint_effort;
 }
 
-void set_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_state, py::object& joint_efforts)
+void set_joint_efforts(std::shared_ptr<moveit::core::RobotState>& robot_state,
+                       std::map<std::string, double>& joint_efforts)
 {
-  // TODO(peterdavidfagan): currently we cannot set efforts for jmg consider fixing this
-  if (py::isinstance<py::dict>(joint_efforts))
+  for (const auto& item : joint_efforts)
   {
-    auto joint_efforts_cpp = joint_efforts.cast<std::map<std::string, double>>();
-    for (const auto& item : joint_efforts_cpp)
-    {
-      robot_state->setVariableEffort(item.first, item.second);
-    }
-  }
-  else
-  {
-    throw std::invalid_argument("Invalid joint_efforts type");
+    robot_state->setVariableEffort(item.first, item.second);
   }
 }
 
