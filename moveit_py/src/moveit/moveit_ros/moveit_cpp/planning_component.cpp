@@ -125,7 +125,7 @@ bool set_goal(std::shared_ptr<moveit_cpp::PlanningComponent>& planning_component
   {
     throw std::invalid_argument("Cannot specify both pose goal and motion plan constraints");
   }
-  else if (pose_stamped_msg && !pose_link || !pose_stamped_msg && pose_link)
+  else if ((pose_stamped_msg && !pose_link) || (!pose_stamped_msg && pose_link))
   {
     throw std::invalid_argument("Must specify both message and corresponding link");
   }
