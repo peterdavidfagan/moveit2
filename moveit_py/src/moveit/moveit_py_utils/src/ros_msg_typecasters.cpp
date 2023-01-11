@@ -36,6 +36,7 @@
 
 #include <moveit_py/moveit_py_utils/ros_msg_typecasters.h>
 
+namespace py = pybind11;
 namespace moveit_py
 {
 namespace moveit_py_utils
@@ -52,19 +53,12 @@ py::object createMessage(const std::string& ros_msg_name)
   return cls();
 }
 
-bool convertible(const pybind11::handle& h, const std::string ros_msg_name)
+bool convertible(const pybind11::handle& h, const std::string& ros_msg_name)
 {
-  try
-  {
-    PyObject* o = h.attr("_type").ptr();
-    std::cout << py::cast<std::string>(o) << std::endl;
-    std::cout << ros_msg_name << std::endl;
-    return py::cast<std::string>(o) == ros_msg_name;
-  }
-  catch (const std::exception& e)
-  {
-    return false;
-  }
+  PyObject* o = h.attr("__class__").attr("__name__").ptr();
+  std::size_t pos = ros_msg_name.find_last_of('/');
+  std::string class_name = ros_msg_name.substr(pos + 1).c_str();
+  return py::cast<std::string>(o) == class_name;
 }
 
 }  // namespace moveit_py_utils
