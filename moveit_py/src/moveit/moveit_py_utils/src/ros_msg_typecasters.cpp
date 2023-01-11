@@ -57,7 +57,7 @@ bool convertible(const pybind11::handle& h, const std::string& ros_msg_name)
 {
   PyObject* o = h.attr("__class__").attr("__name__").ptr();
   std::size_t pos = ros_msg_name.find_last_of('/');
-  std::string class_name = ros_msg_name.substr(pos + 1).c_str();
+  std::string class_name = ros_msg_name.substr(pos + 1);
   return py::cast<std::string>(o) == class_name;
 }
 
