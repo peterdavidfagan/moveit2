@@ -4,13 +4,13 @@
 `moveit` is a Python library for interfacing with the core functionalities of MoveIt 2.
 The goal of this library is to provide a simplified interface for MoveIt 2 Python users.
 
-This Python library depends on [Pybind11](https://pybind11.readthedocs.io/en/stable/index.html) for generating Python bindings.
+This Python library depends on [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) for generating Python bindings.
 The project is split into the following folders:
 
-    ├── docs                    # Sphinx documentation files
+    ├── docs                 # Sphinx documentation files
     ├── moveit               # Python library stubs; Python functionalities built on top of bindings
-    ├── src/moveit           # Pybind11 binding code
-    ├── test                    # Unit and integration testing
+    ├── src/moveit           # pybind11 binding code
+    ├── test                 # Unit and integration testing
 
 ## Tutorials
 (1) [Using Jupyter Notebooks]()
