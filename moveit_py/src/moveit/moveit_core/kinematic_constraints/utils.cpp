@@ -76,6 +76,7 @@ moveit_msgs::msg::Constraints construct_link_constraint(const std::string& link_
     quaternion.quaternion.x = orientation.value()[0];
     quaternion.quaternion.y = orientation.value()[1];
     quaternion.quaternion.z = orientation.value()[2];
+    quaternion.quaternion.w = orientation.value()[3];
 
     moveit_msgs::msg::Constraints orientation_constraints =
         kinematic_constraints::constructGoalConstraints(link_name, quaternion, orientation_tolerance.value());
@@ -110,7 +111,7 @@ moveit_msgs::msg::Constraints construct_link_constraint(const std::string& link_
     quaternion.quaternion.x = orientation.value()[0];
     quaternion.quaternion.y = orientation.value()[1];
     quaternion.quaternion.z = orientation.value()[2];
-
+    quaternion.quaternion.w = orientation.value()[3];
     constraints_cpp =
         kinematic_constraints::constructGoalConstraints(link_name, quaternion, orientation_tolerance.value());
   }
