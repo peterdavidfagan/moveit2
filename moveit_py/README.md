@@ -13,9 +13,7 @@ The project is split into the following folders:
     ├── test                 # Unit and integration testing
 
 ## Tutorials
-(1) [Using Jupyter Notebooks]()
-
-(2) [Motion Planning]()
+We are continuing to add tutorials for the MoveIt 2 Python library. Of particular note is the fact that one can interact with MoveIt interactively since Python is an interpreted language, our tutorials demonstrate this through leveraging Jupyter notebooks. For further details please consult the [MoveIt 2 tutorials site](https://moveit.picknik.ai/main/index.html).
 
 ## Contribution Guidelines
 Community contributions are welcome.
