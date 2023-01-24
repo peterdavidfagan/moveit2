@@ -1,8 +1,5 @@
 # Servo Module
-This module provides a client for interacting with MoveIt servo.
-
-# Tutorial
-Add links to official tutorials here.
+This module provides a client for interacting with MoveIt Servo.
 
 # Supported Devices
 * PS4 DualShock Controller
