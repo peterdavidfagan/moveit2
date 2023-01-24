@@ -49,7 +49,7 @@ def create_params_file_from_dict(params, node_name):
 
 def get_launch_params_filepath():
     """
-    A utility that returns the path value after argument --param-file.
+    A utility that returns the path value after argument --params-file.
     """
     try:
         cli_args = sys.argv
