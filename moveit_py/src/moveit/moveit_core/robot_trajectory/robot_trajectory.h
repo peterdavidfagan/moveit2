@@ -40,6 +40,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
 #include <moveit/robot_trajectory/robot_trajectory.h>
+#include <moveit_msgs/msg/robot_trajectory.hpp>
 
 namespace py = pybind11;
 
@@ -47,6 +48,8 @@ namespace moveit_py
 {
 namespace bind_robot_trajectory
 {
+moveit_msgs::msg::RobotTrajectory get_robot_trajectory_msg(const robot_trajectory::RobotTrajectoryConstPtr& robot_trajectory, const std::vector<std::string>& joint_filter);
+
 void init_robot_trajectory(py::module& m);
 }  // namespace bind_robot_trajectory
 }  // namespace moveit_py
