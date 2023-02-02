@@ -35,11 +35,21 @@
 /* Author: Peter David Fagan */
 
 #include "robot_trajectory.h"
+#include <moveit_py/moveit_py_utils/ros_msg_typecasters.h>
 
 namespace moveit_py
 {
 namespace bind_robot_trajectory
 {
+moveit_msgs::msg::RobotTrajectory
+get_robot_trajectory_msg(const robot_trajectory::RobotTrajectoryConstPtr& robot_trajectory,
+                         const std::vector<std::string>& joint_filter)
+{
+  moveit_msgs::msg::RobotTrajectory msg;
+  robot_trajectory->getRobotTrajectoryMsg(msg, joint_filter);
+  return msg;
+}
+
 void init_robot_trajectory(py::module& m)
 {
   py::module robot_trajectory = m.def_submodule("robot_trajectory");
@@ -56,6 +66,13 @@ void init_robot_trajectory(py::module& m)
 
            Returns:
                :py:class:`moveit_py.core.RobotState`: The robot state corresponding to a waypoint at the specified index in the trajectory.
+           )")
+      .def(
+          "__iter__",
+          [](robot_trajectory::RobotTrajectory& self) { return py::make_iterator(self.begin(), self.end()); },
+          py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */,
+          R"(
+           Iterate over the waypoints in the trajectory.
            )")
 
       .def("__len__", &robot_trajectory::RobotTrajectory::getWayPointCount,
@@ -100,6 +117,13 @@ void init_robot_trajectory(py::module& m)
            Get the durations from the previous waypoint in the trajectory.
            Returns:
                list of float: The duration from previous of each waypoint in the trajectory.
+           )")
+      .def("get_robot_trajectory_msg", &moveit_py::bind_robot_trajectory::get_robot_trajectory_msg,
+           py::arg("joint_filter") = std::vector<std::string>(),
+           R"(
+           Get the trajectory as a `moveit_msgs.msg.RobotTrajectory` message.
+           Returns:
+               moveit_msgs.msg.RobotTrajectory: A ROS robot trajectory message.
            )");
   // TODO (peterdavidfagan): support other methods such as appending trajectories
 }
