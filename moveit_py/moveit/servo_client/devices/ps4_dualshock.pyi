@@ -1,8 +1,8 @@
-from moveit_py.servo_client.teleop import TeleopDevice as TeleopDevice
+from rclpy.impl.rcutils_logger import RCUtilsLogger
+from moveit_py.servo_client.teleop import TeleopDevice
 from multiprocessing import Process as Process
 from sensor_msgs.msg import Joy as Joy
 from std_srvs.srv import Trigger as Trigger
-from typing import Any
 
 class DualShockAxes:
     LEFT_STICK_X: int
@@ -62,7 +62,7 @@ class PS4DualShock:
     def __init__(self, Axes, Buttons) -> None: ...
 
 class PS4DualShockTeleop(TeleopDevice):
-    logger: Any
+    logger: RCUtilsLogger
     def __init__(
         self,
         node_name: str = ...,
@@ -70,4 +70,4 @@ class PS4DualShockTeleop(TeleopDevice):
         device_config: PS4DualShock = ...,
     ) -> None: ...
     def publish_command(self, data) -> None: ...
-    def record(self) -> None: ...
+    def record() -> None: ...
