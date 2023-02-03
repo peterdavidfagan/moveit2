@@ -58,8 +58,11 @@ void init_moveit_py(py::module& m)
                        const py::object& config_dict, bool provide_planning_service) {
              static const rclcpp::Logger LOGGER = rclcpp::get_logger("moveit_cpp_initializer");
 
-             RCLCPP_INFO(LOGGER, "Initialize rclcpp");
-             rclcpp::init(0, nullptr);
+             if (!rclcpp::ok())
+             {
+               RCLCPP_INFO(LOGGER, "Initialize rclcpp");
+               rclcpp::init(0, nullptr);
+             }
 
              RCLCPP_INFO(LOGGER, "Initialize node parameters");
              rclcpp::NodeOptions node_options;
