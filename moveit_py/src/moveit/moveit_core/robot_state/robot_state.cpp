@@ -302,7 +302,7 @@ void init_robot_state(py::module& m)
                joint_model_group_name (str): The name of the joint model group to compute the Jacobian for.
                link_name (str): The name of the link model to compute the Jacobian for.
                reference_point_position (:py:class:`numpy.ndarray`): The position of the reference point in the link frame.
-           use_quaternion_representation (bool): If true, the Jacobian will be represented as a quaternion.
+	       use_quaternion_representation (bool): If true, the Jacobian will be represented using a quaternion representation, if false it defaults to euler angle representation.
            Returns:
                :py:class:`numpy.ndarray`: The Jacobian of the specified group with respect to the reference point.
            )")
