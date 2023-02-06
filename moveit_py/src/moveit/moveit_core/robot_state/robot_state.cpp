@@ -439,7 +439,7 @@ void init_robot_state(py::module& m)
            Sets the state of the robot to the one that results from solving the inverse kinematics for the specified group.
            Args:
                joint_model_group_name (str): The name of the joint model group to set the state for.
-               geometry_pose (geometry_msgs.msg.Pose): The pose of the end-effector to solve the inverse kinematics for.
+               geometry_pose (:py:class: `geometry_msgs.msg.Pose`): The pose of the end-effector to solve the inverse kinematics for.
                tip_name (str): The name of the link that is the tip of the end-effector.
                timeout (float): The amount of time to wait for the IK solution to be found.
            )")
@@ -499,9 +499,8 @@ void init_robot_state(py::module& m)
              Update state transforms.
 
              Args:
-                 force (bool):
-             category (str): specifies the category to update. All indicates updating all transforms while "links_only"
-             and "collisions_only" ensure that only links or collision transforms are updated. )");
+	     	force (bool): when true forces the update of the transforms from scratch.
+		category (str): specifies the category to update. All indicates updating all transforms while "links_only" and "collisions_only" ensure that only links or collision transforms are updated. )");
 }
 }  // namespace bind_robot_state
 }  // namespace moveit_py
