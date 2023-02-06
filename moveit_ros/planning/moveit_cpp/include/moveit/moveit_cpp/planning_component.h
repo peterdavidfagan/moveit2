@@ -39,7 +39,7 @@
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <moveit/moveit_cpp/moveit_cpp.h>
-#include <moveit/moveit_cpp/plan_solutions.h>
+#include <moveit/moveit_cpp/plan_solutions.hpp>
 #include <moveit/planning_interface/planning_response.h>
 #include <moveit/robot_state/conversions.h>
 #include <moveit/robot_state/robot_state.h>

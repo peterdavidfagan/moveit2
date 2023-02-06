@@ -34,7 +34,7 @@
 
 /* Author: Peter David Fagan */
 
-#include <moveit/moveit_cpp/plan_solutions.h>
+#include <moveit/moveit_cpp/plan_solutions.hpp>
 
 namespace moveit_cpp
 {
