@@ -48,11 +48,7 @@ geometry_msgs::msg::PoseStamped PoseStampedToCpp(const py::object& pose_stamped)
   // recreate instance in C++ using python object data
   geometry_msgs::msg::PoseStamped pose_stamped_cpp;
   pose_stamped_cpp.header.frame_id = pose_stamped.attr("header").attr("frame_id").cast<std::string>();
-  pose_stamped_cpp.pose.orientation.w = pose_stamped.attr("pose").attr("orientation").attr("w").cast<double>();
-  pose_stamped_cpp.pose.position.x = pose_stamped.attr("pose").attr("position").attr("x").cast<double>();
-  pose_stamped_cpp.pose.position.y = pose_stamped.attr("pose").attr("position").attr("y").cast<double>();
-  pose_stamped_cpp.pose.position.z = pose_stamped.attr("pose").attr("position").attr("z").cast<double>();
-
+  pose_stamped_cpp.pose = PoseToCpp(pose_stamped.attr("pose"));
   return pose_stamped_cpp;
 }
 
@@ -61,6 +57,9 @@ geometry_msgs::msg::Pose PoseToCpp(const py::object& pose)
   // recreate instance in C++ using python object data
   geometry_msgs::msg::Pose pose_cpp;
   pose_cpp.orientation.w = pose.attr("orientation").attr("w").cast<double>();
+  pose_cpp.orientation.x = pose.attr("orientation").attr("x").cast<double>();
+  pose_cpp.orientation.y = pose.attr("orientation").attr("y").cast<double>();
+  pose_cpp.orientation.z = pose.attr("orientation").attr("z").cast<double>();
   pose_cpp.position.x = pose.attr("position").attr("x").cast<double>();
   pose_cpp.position.y = pose.attr("position").attr("y").cast<double>();
   pose_cpp.position.z = pose.attr("position").attr("z").cast<double>();
@@ -74,6 +73,9 @@ py::object PoseToPy(geometry_msgs::msg::Pose pose)
   py::object pose_py = py::module_::import("geometry_msgs.msg").attr("Pose")();
 
   pose_py.attr("orientation").attr("w") = pose.orientation.w;
+  pose_py.attr("orientation").attr("x") = pose.orientation.x;
+  pose_py.attr("orientation").attr("y") = pose.orientation.y;
+  pose_py.attr("orientation").attr("z") = pose.orientation.z;
   pose_py.attr("position").attr("x") = pose.position.x;
   pose_py.attr("position").attr("y") = pose.position.y;
   pose_py.attr("position").attr("z") = pose.position.z;
