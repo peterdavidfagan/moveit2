@@ -54,7 +54,7 @@ void init_joint_model_group(py::module& m)
 
       .def_property("joint_model_names", &moveit::core::JointModelGroup::getJointModelNames, nullptr,
                     R"(
-                    list of str: The names of the joint models in the group.
+                    list[str]: The names of the joint models in the group.
                     )");
 }
 }  // namespace bind_robot_model
