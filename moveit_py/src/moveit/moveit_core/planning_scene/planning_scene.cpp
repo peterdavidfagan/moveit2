@@ -176,8 +176,8 @@ void init_planning_scene(py::module& m)
            R"(
            Apply a collision object to the planning scene.
            Args:
-               object (moveit_msgs.msg.CollisionObject): The collision object to apply to the planning scene.
-           color (moveit_msgs.msg.ObjectColor, optional): The color of the collision object. Defaults to None if not specified.
+	   	object (moveit_msgs.msg.CollisionObject): The collision object to apply to the planning scene.
+		color (moveit_msgs.msg.ObjectColor, optional): The color of the collision object. Defaults to None if not specified.
            )")
 
       .def("set_object_color", &planning_scene::PlanningScene::setObjectColor, py::arg("object_id"),
@@ -246,8 +246,8 @@ void init_planning_scene(py::module& m)
            Check if the robot state fulfills the passed constraints
            Args:
                state (moveit_py.core.RobotState): The robot state to check constraints for.
-                   constraints (moveit_msgs.msg.Constraints): The constraints to check.
-           verbose (bool):
+	       constraints (moveit_msgs.msg.Constraints): The constraints to check.
+	       verbose (bool):
            Returns:
                bool: true if state is constrained otherwise false.
            )")
