@@ -78,8 +78,8 @@ void init_planning_scene(py::module& m)
   py::class_<planning_scene::PlanningScene, std::shared_ptr<planning_scene::PlanningScene>>(planning_scene,
                                                                                             "PlanningScene",
                                                                                             R"(
-      Representation of the environment as seen by a planning instance. The environment geometry, the robot geometry and state are maintained.
-      )")
+      		     Representation of the environment as seen by a planning instance. The environment geometry, the robot geometry and state are maintained.
+      		     )")
 
       // properties
       .def_property("name", &planning_scene::PlanningScene::getName, &planning_scene::PlanningScene::setName,
@@ -104,8 +104,8 @@ void init_planning_scene(py::module& m)
           py::overload_cast<const moveit_msgs::msg::RobotState&>(&planning_scene::PlanningScene::setCurrentState),
           py::return_value_policy::move,
           R"(
-                    :py:class:`moveit_py.core.RobotState`: The current state of the robot.
-                    )")
+	  :py:class:`moveit_py.core.RobotState`: The current state of the robot.
+          )")
 
       //.def_property("current_state", &planning_scene::PlanningScene::getCurrentState,
       //              &moveit_py::bind_planning_scene::set_current_state, py::return_value_policy::move,
