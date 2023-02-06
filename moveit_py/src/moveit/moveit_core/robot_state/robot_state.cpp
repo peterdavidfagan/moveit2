@@ -273,7 +273,7 @@ void init_robot_state(py::module& m)
            Args:
                link_name (str): The name of the link to get the pose for.
            Returns:
-               geometry_msgs.msg.Pose: A ROS geometry message containing the pose of the link.
+               :py:class: `geometry_msgs.msg.Pose`: A ROS geometry message containing the pose of the link.
            )")
 
       .def("get_jacobian",
