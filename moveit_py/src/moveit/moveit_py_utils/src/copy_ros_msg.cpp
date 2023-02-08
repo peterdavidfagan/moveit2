@@ -122,10 +122,10 @@ shape_msgs::msg::SolidPrimitive SolidPrimitiveToCpp(const py::object& primitive)
   // recreate instance in C++ using python object data
   shape_msgs::msg::SolidPrimitive primitive_cpp;
   primitive_cpp.type = primitive.attr("type").cast<int>();
-  int num_dimensions = primitive.attr("dimensions").attr("__len__")().cast<int>();
-  for (int j = 0; j < num_dimensions; j++)
+
+  for (auto dimension: primitive.attr("dimensions"))
   {
-    primitive_cpp.dimensions.push_back(primitive.attr("dimensions").attr("__getitem__")(j).cast<double>());
+    primitive_cpp.dimensions.push_back(dimension.cast<double>());
   }
 
   return primitive_cpp;
@@ -147,14 +147,14 @@ shape_msgs::msg::Mesh MeshToCpp(const py::object& mesh)
   // recreate instance in C++ using python object data
   shape_msgs::msg::Mesh mesh_cpp;
   mesh_cpp.vertices.resize(mesh.attr("vertices").attr("__len__")().cast<int>());
-  for (int j = 0; j < mesh.attr("vertices").attr("__len__")().cast<int>(); j++)
+  for (auto vertex: mesh.attr("vertices"))
   {
-    mesh_cpp.vertices.push_back(PointToCpp(mesh.attr("vertices").attr("__getitem__")(j)));
+    mesh_cpp.vertices.push_back(PointToCpp(vertex));
   }
   mesh_cpp.triangles.resize(mesh.attr("triangles").attr("__len__")().cast<int>());
-  for (int j = 0; j < mesh.attr("triangles").attr("__len__")().cast<int>(); j++)
+  for (auto triangle:mesh.attr("triangles"))
   {
-    mesh_cpp.triangles.push_back(MeshTriangleToCpp(mesh.attr("triangles").attr("__getitem__")(j)));
+    mesh_cpp.triangles.push_back(MeshTriangleToCpp(triangle));
   }
 
   return mesh_cpp;
@@ -166,29 +166,29 @@ moveit_msgs::msg::BoundingVolume BoundingVolumeToCpp(const py::object& bounding_
   moveit_msgs::msg::BoundingVolume bounding_volume_cpp;
 
   // primitives
-  for (int j = 0; j < bounding_volume.attr("primitives").attr("__len__")().cast<int>(); j++)
+  for (auto primitive: bounding_volume.attr("primitives"))
   {
     bounding_volume_cpp.primitives.push_back(
-        SolidPrimitiveToCpp(bounding_volume.attr("primitives").attr("__getitem__")(j)));
+        SolidPrimitiveToCpp(primitive));
   }
 
   // primitive poses
-  for (int j = 0; j < bounding_volume.attr("primitive_poses").attr("__len__")().cast<int>(); j++)
+  for (auto primitive_pose: bounding_volume.attr("primitive_poses"))
   {
     bounding_volume_cpp.primitive_poses.push_back(
-        PoseToCpp(bounding_volume.attr("primitive_poses").attr("__getitem__")(j)));
+        PoseToCpp(primitive_pose));
   }
 
   // meshes
-  for (int j = 0; j < bounding_volume.attr("meshes").attr("__len__")().cast<int>(); j++)
+  for (auto mesh: bounding_volume.attr("meshes"))
   {
-    bounding_volume_cpp.meshes.push_back(MeshToCpp(bounding_volume.attr("meshes").attr("__getitem__")(j)));
+    bounding_volume_cpp.meshes.push_back(MeshToCpp(mesh));
   }
 
   // mesh poses
-  for (int j = 0; j < bounding_volume.attr("mesh_poses").attr("__len__")().cast<int>(); j++)
+  for (auto mesh_pose: bounding_volume.attr("mesh_poses"))
   {
-    bounding_volume_cpp.mesh_poses.push_back(PoseToCpp(bounding_volume.attr("mesh_poses").attr("__getitem__")(j)));
+    bounding_volume_cpp.mesh_poses.push_back(PoseToCpp(mesh_pose));
   }
 
   return bounding_volume_cpp;
@@ -275,38 +275,38 @@ moveit_msgs::msg::CollisionObject CollisionObjectToCpp(const py::object& collisi
   collision_object_cpp.type.db = collision_object.attr("type").attr("db").cast<std::string>();
 
   // iterate through python list creating C++ vector of primitives
-  int num_primitives = collision_object.attr("primitives").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_primitives; i++)
+
+  for (auto py_primitive: collision_object.attr("primitives"))
   {
-    py::object primitive = collision_object.attr("primitives").attr("__getitem__")(i);
+    py::object primitive = py_primitive;
     auto primitive_cpp = SolidPrimitiveToCpp(primitive);
     collision_object_cpp.primitives.push_back(primitive_cpp);
   }
 
   // iterate through python list creating C++ vector of primitive poses
-  int num_primitives_poses = collision_object.attr("primitive_poses").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_primitives_poses; i++)
+
+  for (auto py_primitive_pose: collision_object.attr("primitive_poses"))
   {
-    py::object primitive_pose = collision_object.attr("primitive_poses").attr("__getitem__")(i);
+    py::object primitive_pose = py_primitive_pose;
     auto primitive_pose_cpp = PoseToCpp(primitive_pose);
     collision_object_cpp.primitive_poses.push_back(primitive_pose_cpp);
   }
 
   // iterate through python list creating C++ vector of meshes
-  int num_meshes = collision_object.attr("meshes").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_meshes; i++)
+
+  for (auto py_mesh: collision_object.attr("meshes"))
   {
     // TODO (peterdavidfagan):  implement mesh conversion
-    py::object mesh = collision_object.attr("meshes").attr("__getitem__")(i);
+    py::object mesh = py_mesh;
     auto mesh_cpp = MeshToCpp(mesh);
     collision_object_cpp.meshes.push_back(mesh_cpp);
   }
 
   // iterate through python list creating C++ vector of mesh poses
-  int num_mesh_poses = collision_object.attr("mesh_poses").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_mesh_poses; i++)
+
+  for (auto py_mesh_pose: collision_object.attr("mesh_poses"))
   {
-    py::object mesh_pose = collision_object.attr("mesh_poses").attr("__getitem__")(i);
+    py::object mesh_pose = py_mesh_pose;
     auto mesh_pose_cpp = PoseToCpp(mesh_pose);
     collision_object_cpp.mesh_poses.push_back(mesh_pose_cpp);
   }
@@ -323,37 +323,37 @@ moveit_msgs::msg::Constraints ConstraintsToCpp(const py::object& constraints)
   moveit_msgs::msg::Constraints constraints_cpp;
 
   // iterate through python list creating C++ vector of joint constraints
-  int num_joint_constraints = constraints.attr("joint_constraints").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_joint_constraints; i++)
+
+  for (auto py_joint_constraint: constraints.attr("joint_constraints"))
   {
-    py::object joint_constraint = constraints.attr("__getitem__")(i);
+    py::object joint_constraint = py_joint_constraint;
     auto joint_constraint_cpp = JointConstraintToCpp(joint_constraint);
     constraints_cpp.joint_constraints.push_back(joint_constraint_cpp);
   }
 
   // iterate through python list creating C++ vector of position constraints
-  int num_position_constraints = constraints.attr("position_constraints").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_position_constraints; i++)
+
+  for (auto py_position_constraint: constraints.attr("position_constraints"))
   {
-    py::object position_constraint = constraints.attr("__getitem__")(i);
+    py::object position_constraint = py_position_constraint;
     auto position_constraint_cpp = PositionConstraintToCpp(position_constraint);
     constraints_cpp.position_constraints.push_back(position_constraint_cpp);
   }
 
   // iterate through python list creating C++ vector of orientation constraints
-  int num_orientation_constraints = constraints.attr("orientation_constraints").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_orientation_constraints; i++)
+
+  for (auto py_orientation_constraint: constraints.attr("orientation_constraints"))
   {
-    py::object orientation_constraint = constraints.attr("orientation_constraints").attr("__getitem__")(i);
+    py::object orientation_constraint = py_orientation_constraint;
     auto orientation_constraint_cpp = OrientationConstraintToCpp(orientation_constraint);
     constraints_cpp.orientation_constraints.push_back(orientation_constraint_cpp);
   }
 
   // iterate through python list creating C++ vector of visibility constraints
-  int num_visibility_constraints = constraints.attr("visibility_constraints").attr("__len__")().cast<int>();
-  for (int i = 0; i < num_visibility_constraints; i++)
+
+  for (auto py_visibility_constraint: constraints.attr("visibility_constraints"))
   {
-    py::object visibility_constraint = constraints.attr("visibility_constraints").attr("__getitem__")(i);
+    py::object visibility_constraint = py_visibility_constraint;
     auto visibility_constraint_cpp = VisibilityConstraintToCpp(visibility_constraint);
     constraints_cpp.visibility_constraints.push_back(visibility_constraint_cpp);
   }
