@@ -48,7 +48,9 @@ namespace moveit_py
 {
 namespace bind_robot_trajectory
 {
-moveit_msgs::msg::RobotTrajectory get_robot_trajectory_msg(const robot_trajectory::RobotTrajectoryConstPtr& robot_trajectory, const std::vector<std::string>& joint_filter);
+moveit_msgs::msg::RobotTrajectory
+get_robot_trajectory_msg(const robot_trajectory::RobotTrajectoryConstPtr& robot_trajectory,
+                         const std::vector<std::string>& joint_filter);
 
 void init_robot_trajectory(py::module& m);
 }  // namespace bind_robot_trajectory

@@ -127,7 +127,13 @@ void init_moveit_py(py::module& m)
            R"(
            Initialize moveit_cpp node and the planning scene service.
            )")
-
+      .def("execute",
+           py::overload_cast<const robot_trajectory::RobotTrajectoryPtr&, bool, const std::vector<std::string>&>(
+               &moveit_cpp::MoveItCpp::execute),
+           py::arg("robot_trajectory"), py::arg("blocking") = true, py::arg("controllers"),
+           R"(
+	   Execute a trajectory (planning group is inferred from robot trajectory object).
+	   )")
       .def("get_planning_component", &moveit_py::bind_moveit_cpp::get_planning_component,
            py::arg("planning_component_name"), py::return_value_policy::take_ownership,
            R"(

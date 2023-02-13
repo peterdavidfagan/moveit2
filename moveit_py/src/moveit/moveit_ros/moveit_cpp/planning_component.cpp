@@ -336,15 +336,6 @@ void init_planning_component(py::module& m)
                path_constraints (moveit_msgs.msg.Constraints): The path constraints.
         )")
 
-      .def("execute", &moveit_cpp::PlanningComponent::execute, py::arg("blocking") = true,
-           py::return_value_policy::move,
-           R"(
-           Execute the latest computed solution trajectory computed by plan().
-           By default this function terminates after the execution is complete. The execution can be run in background by setting blocking to false.
-           Args:
-               blocking (bool): Whether to wait for the execution to complete or not.
-        )")
-
       // Interacting with workspace
       .def("set_workspace", &moveit_cpp::PlanningComponent::setWorkspace, py::arg("min_x"), py::arg("min_y"),
            py::arg("min_z"), py::arg("max_x"), py::arg("max_y"), py::arg("max_z"),

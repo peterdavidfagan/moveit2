@@ -34,44 +34,19 @@
 
 /* Author: Peter David Fagan */
 
-#include "moveit_core/collision_detection/collision_common.h"
-#include "moveit_core/collision_detection/collision_matrix.h"
-#include "moveit_core/controller_manager/controller_manager.h"
-#include "moveit_core/kinematic_constraints/utils.h"
-#include "moveit_core/planning_interface/planning_response.h"
-#include "moveit_core/planning_scene/planning_scene.h"
-#include "moveit_core/robot_model/joint_model_group.h"
-#include "moveit_core/robot_model/robot_model.h"
-#include "moveit_core/robot_state/robot_state.h"
-#include "moveit_core/robot_trajectory/robot_trajectory.h"
+#pragma once
 
-PYBIND11_MODULE(core, m)
+#include <moveit/controller_manager/controller_manager.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
+
+namespace py = pybind11;
+
+namespace moveit_py
 {
-  m.doc() = R"(
-            Python bindings for moveit_core functionalities.
-            )";
-
-  // Provide custom function signatures
-  py::options options;
-  options.disable_function_signatures();
-
-  // Construct module classes
-  moveit_py::bind_collision_detection::init_collision_request(m);
-  moveit_py::bind_collision_detection::init_collision_result(m);
-  moveit_py::bind_collision_detection::init_acm(m);
-  moveit_py::bind_controller_manager::init_execution_status(m);
-  moveit_py::bind_kinematic_constraints::init_kinematic_constraints(m);
-  moveit_py::bind_planning_scene::init_planning_scene(m);
-  moveit_py::bind_planning_interface::init_motion_plan_response(m);
-  moveit_py::bind_robot_model::init_joint_model_group(m);
-  moveit_py::bind_robot_model::init_robot_model(m);
-  moveit_py::bind_robot_state::init_robot_state(m);
-  moveit_py::bind_robot_trajectory::init_robot_trajectory(m);
-  // TODO (peterdavidfagan): complete LinkModel bindings
-  // LinkModel
-  // py::class_<moveit::core::LinkModel>(m, "LinkModel");
-
-  // TODO (peterdavidfagan): complete JointModel bindings
-  // JointModel (this is an abstract base class)
-  // py::class_<moveit::core::JointModel>(m, "JointModel");
+namespace bind_controller_manager
+{
+void init_execution_status(py::module& m);
 }
+}  // namespace moveit_py
