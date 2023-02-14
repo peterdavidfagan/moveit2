@@ -41,7 +41,7 @@ from sensor_msgs.msg import Joy
 from std_srvs.srv import Trigger
 
 from dataclasses import dataclass
-from moveit_py.servo_client.teleop import TeleopDevice
+from moveit.servo_client.teleop import TeleopDevice
 
 
 ###############################################################################
