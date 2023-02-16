@@ -99,12 +99,16 @@ class PS4DualShockTeleop(TeleopDevice):
 
     def __init__(
         self,
+        ee_frame_name: str,
         node_name: str = "ps4_dualshock_teleop",
         device_name: str = "ps4_dualshock",
         device_config: PS4DualShock = PS4DualShock(),
     ):
         super().__init__(
-            node_name=node_name, device_name=device_name, device_config=device_config
+            node_name=node_name,
+            device_name=device_name,
+            device_config=device_config,
+            ee_frame_name=ee_frame_name,
         )
         self.logger = rclpy.logging.get_logger("ps4_dualshock_teleop")
 
@@ -129,12 +133,9 @@ class PS4DualShockTeleop(TeleopDevice):
             roll_negative = -1 * data.buttons[self.device_config.Buttons.L1]
             twist.twist.angular.z = float(roll_positive + roll_negative)
 
-            twist.header.frame_id = self.get_parameter(
-                "eef_frame_name"
-            ).value  # get ros2 frame name from node parameters
+            twist.header.frame_id = self.ee_frame_name
             twist.header.stamp = self.get_clock().now().to_msg()
             self.twist_publisher.publish(twist)
-
         except Exception as e:
             self.logger.info.error(e)
             print(e)
