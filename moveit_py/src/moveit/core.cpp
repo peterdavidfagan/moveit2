@@ -36,6 +36,7 @@
 
 #include "moveit_core/collision_detection/collision_common.h"
 #include "moveit_core/collision_detection/collision_matrix.h"
+#include "moveit_core/collision_detection/world.h"
 #include "moveit_core/controller_manager/controller_manager.h"
 #include "moveit_core/kinematic_constraints/utils.h"
 #include "moveit_core/planning_interface/planning_response.h"
@@ -58,6 +59,7 @@ PYBIND11_MODULE(core, m)
   // Construct module classes
   moveit_py::bind_collision_detection::init_collision_request(m);
   moveit_py::bind_collision_detection::init_collision_result(m);
+  moveit_py::bind_collision_detection::init_world(m);
   moveit_py::bind_collision_detection::init_acm(m);
   moveit_py::bind_controller_manager::init_execution_status(m);
   moveit_py::bind_kinematic_constraints::init_kinematic_constraints(m);
