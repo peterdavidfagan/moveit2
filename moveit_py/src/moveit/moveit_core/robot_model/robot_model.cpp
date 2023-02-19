@@ -132,6 +132,12 @@ void init_robot_model(py::module& m)
                     list of moveit_py.core.JointModelGroup: The joint model groups available in the robot model.
                     )")
 
+      .def_property("end_effectors", &moveit::core::RobotModel::getEndEffectors, nullptr,
+                    py::return_value_policy::reference_internal,
+                    R"(
+                    TODO
+                    )")
+
       .def("has_joint_model_group", &moveit::core::RobotModel::hasJointModelGroup, py::arg("joint_model_group_name"),
            R"(
            Checks if a joint model group with the given name exists in the robot model.
