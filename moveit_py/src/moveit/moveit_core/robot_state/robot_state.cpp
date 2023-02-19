@@ -237,6 +237,9 @@ void init_robot_state(py::module& m)
                :py:class:`moveit_py.core.RobotModel`: The robot model associated to the instantiated robot state.
 
            )")
+      .def("__copy__", [](const moveit::core::RobotState* self) { return moveit::core::RobotState{ *self }; })
+      .def("__deepcopy__",
+           [](const moveit::core::RobotState* self, py::dict /* memo */) { return moveit::core::RobotState{ *self }; })
 
       // Get underlying robot model, frame transformations and jacobian
       .def_property("robot_model", &moveit::core::RobotState::getRobotModel, nullptr,
