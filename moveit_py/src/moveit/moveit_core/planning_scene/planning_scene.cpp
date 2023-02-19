@@ -81,6 +81,8 @@ void init_planning_scene(py::module& m)
       		     Representation of the environment as seen by a planning instance. The environment geometry, the robot geometry and state are maintained.
       		     )")
 
+      .def(py::init<const moveit::core::RobotModelConstPtr&, const collision_detection::WorldPtr&>(),
+           py::arg("robot_model"), py::arg("world") = std::make_shared<collision_detection::World>())
       // properties
       .def_property("name", &planning_scene::PlanningScene::getName, &planning_scene::PlanningScene::setName,
                     R"(
@@ -99,19 +101,12 @@ void init_planning_scene(py::module& m)
                     str: The frame in which planning is performed.
                     )")
 
-      .def_property(
-          "current_state", &planning_scene::PlanningScene::getCurrentState,
-          py::overload_cast<const moveit_msgs::msg::RobotState&>(&planning_scene::PlanningScene::setCurrentState),
-          py::return_value_policy::move,
-          R"(
-	  :py:class:`moveit_py.core.RobotState`: The current state of the robot.
-          )")
-
-      //.def_property("current_state", &planning_scene::PlanningScene::getCurrentState,
-      //              &moveit_py::bind_planning_scene::set_current_state, py::return_value_policy::move,
-      //              R"(
-      //              :py:class:`moveit_py.core.RobotState`: The current state of the robot.
-      //              )")
+      .def_property("current_state", &planning_scene::PlanningScene::getCurrentState,
+                    py::overload_cast<const moveit::core::RobotState&>(&planning_scene::PlanningScene::setCurrentState),
+                    py::return_value_policy::reference_internal,
+                    R"(
+                    :py:class:`moveit_py.core.RobotState`: The current state of the robot.
+                    )")
 
       .def_property("planning_scene_message", &moveit_py::bind_planning_scene::get_planning_scene_msg, nullptr,
                     py::return_value_policy::move)
@@ -119,6 +114,14 @@ void init_planning_scene(py::module& m)
       .def_property("transforms", py::overload_cast<>(&planning_scene::PlanningScene::getTransforms), nullptr)
 
       // methods
+      .def("__copy__",
+           [](const planning_scene::PlanningScene* self) {
+             return planning_scene::PlanningScene::clone(self->shared_from_this());
+           })
+      .def("__deepcopy__",
+           [](const planning_scene::PlanningScene* self, py::dict /* memo */) {
+             return planning_scene::PlanningScene::clone(self->shared_from_this());
+           })
       .def("knows_frame_transform",
            py::overload_cast<const moveit::core::RobotState&, const std::string&>(
                &planning_scene::PlanningScene::knowsFrameTransform, py::const_),
@@ -212,6 +215,10 @@ void init_planning_scene(py::module& m)
            )")
 
       // checking state validity
+      .def("is_state_valid",
+           py::overload_cast<const moveit::core::RobotState&, const std::string&, bool>(
+               &planning_scene::PlanningScene::isStateValid, py::const_),
+           py::arg("robot_state"), py::arg("joint_model_group_name"), py::arg("verbose") = false)
       .def("is_state_colliding",
            py::overload_cast<const std::string&, bool>(&planning_scene::PlanningScene::isStateColliding),
            py::arg("joint_model_group_name"), py::arg("verbose") = false,
