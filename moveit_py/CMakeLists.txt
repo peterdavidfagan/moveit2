@@ -27,11 +27,13 @@ pybind11_add_module(core
 	src/moveit/core.cpp
 	src/moveit/moveit_core/collision_detection/collision_common.cpp
 	src/moveit/moveit_core/collision_detection/collision_matrix.cpp
+	src/moveit/moveit_core/collision_detection/world.cpp
 	src/moveit/moveit_core/controller_manager/controller_manager.cpp
 	src/moveit/moveit_core/kinematic_constraints/utils.cpp
 	src/moveit/moveit_core/planning_interface/planning_response.cpp
 	src/moveit/moveit_core/planning_scene/planning_scene.cpp
 	src/moveit/moveit_core/transforms/transforms.cpp
+	src/moveit/moveit_core/robot_model/joint_model.cpp
 	src/moveit/moveit_core/robot_model/joint_model_group.cpp
 	src/moveit/moveit_core/robot_model/robot_model.cpp
 	src/moveit/moveit_core/robot_state/robot_state.cpp

@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2022, Peter David Fagan
+ *  Copyright (c) 2023, Jafar Uruç
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of PickNik Inc. nor the names of its
+ *   * Neither the name of the copyright holder nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -32,42 +32,19 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/* Author: Peter David Fagan */
+/* Author: Jafar Uruç */
 
-#include "joint_model_group.h"
+#include "world.h"
 
 namespace moveit_py
 {
-namespace bind_robot_model
+namespace bind_collision_detection
 {
-bool satisfies_position_bounds(const moveit::core::JointModelGroup* jmg, const Eigen::VectorXd& joint_positions,
-                               const double margin)
+void init_world(py::module& m)
 {
-  assert(joint_positions.size() == jmg->getActiveVariableCount());
-  return jmg->satisfiesPositionBounds(joint_positions.data(), margin);
+  py::module collision_detection = m.def_submodule("collision_detection");
+
+  py::class_<collision_detection::World, collision_detection::WorldPtr>(m, "World").def(py::init<>());
 }
-
-void init_joint_model_group(py::module& m)
-{
-  py::class_<moveit::core::JointModelGroup>(m, "JointModelGroup",
-                                            R"(
-          Representation of a group of joints that are part of a robot model.
-          )")
-
-      .def_property("name", &moveit::core::JointModelGroup::getName, nullptr,
-                    R"(
-                    str: The name of the joint model group.
-                    )")
-
-      .def_property("joint_model_names", &moveit::core::JointModelGroup::getJointModelNames, nullptr,
-                    R"(
-                    list[str]: The names of the joint models in the group.
-                    )")
-      .def_property("active_joint_model_names", &moveit::core::JointModelGroup::getActiveJointModelNames, nullptr)
-      .def_property("active_joint_model_bounds", &moveit::core::JointModelGroup::getActiveJointModelsBounds, nullptr,
-                    py::return_value_policy::reference_internal)
-      .def("satisfies_position_bounds", &moveit_py::bind_robot_model::satisfies_position_bounds, py::arg("values"),
-           py::arg("margin") = 0.0);
-}
-}  // namespace bind_robot_model
+}  // namespace bind_collision_detection
 }  // namespace moveit_py

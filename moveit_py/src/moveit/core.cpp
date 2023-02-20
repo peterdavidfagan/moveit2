@@ -36,10 +36,12 @@
 
 #include "moveit_core/collision_detection/collision_common.h"
 #include "moveit_core/collision_detection/collision_matrix.h"
+#include "moveit_core/collision_detection/world.h"
 #include "moveit_core/controller_manager/controller_manager.h"
 #include "moveit_core/kinematic_constraints/utils.h"
 #include "moveit_core/planning_interface/planning_response.h"
 #include "moveit_core/planning_scene/planning_scene.h"
+#include "moveit_core/robot_model/joint_model.h"
 #include "moveit_core/robot_model/joint_model_group.h"
 #include "moveit_core/robot_model/robot_model.h"
 #include "moveit_core/robot_state/robot_state.h"
@@ -58,11 +60,13 @@ PYBIND11_MODULE(core, m)
   // Construct module classes
   moveit_py::bind_collision_detection::init_collision_request(m);
   moveit_py::bind_collision_detection::init_collision_result(m);
+  moveit_py::bind_collision_detection::init_world(m);
   moveit_py::bind_collision_detection::init_acm(m);
   moveit_py::bind_controller_manager::init_execution_status(m);
   moveit_py::bind_kinematic_constraints::init_kinematic_constraints(m);
   moveit_py::bind_planning_scene::init_planning_scene(m);
   moveit_py::bind_planning_interface::init_motion_plan_response(m);
+  moveit_py::bind_robot_model::init_joint_model(m);
   moveit_py::bind_robot_model::init_joint_model_group(m);
   moveit_py::bind_robot_model::init_robot_model(m);
   moveit_py::bind_robot_state::init_robot_state(m);

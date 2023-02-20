@@ -1,5 +1,5 @@
 from rclpy.impl.rcutils_logger import RCUtilsLogger
-from moveit_py.servo_client.teleop import TeleopDevice
+from moveit.servo_client.teleop import TeleopDevice as TeleopDevice
 from multiprocessing import Process as Process
 from sensor_msgs.msg import Joy as Joy
 from std_srvs.srv import Trigger as Trigger
