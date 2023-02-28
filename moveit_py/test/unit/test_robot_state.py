@@ -3,7 +3,8 @@ import numpy as np
 
 from geometry_msgs.msg import Pose
 
-from moveit_py.core import RobotState, RobotModel
+from moveit.core.robot_state import RobotState
+from moveit.core.robot_model import RobotModel
 
 
 class TestRobotState(unittest.TestCase):
@@ -37,7 +38,7 @@ class TestRobotState(unittest.TestCase):
             urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
         )
         robot_state = RobotState(robot_model)
-
+        robot_state.update()
         frame_transform = robot_state.get_frame_transform("panda_link0")
 
         self.assertIsInstance(frame_transform, np.ndarray)
@@ -51,6 +52,7 @@ class TestRobotState(unittest.TestCase):
             urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
         )
         robot_state = RobotState(robot_model)
+        robot_state.update()
         pose = robot_state.get_pose(link_name="panda_link8")
 
         self.assertIsInstance(pose, Pose)
@@ -64,6 +66,7 @@ class TestRobotState(unittest.TestCase):
             urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
         )
         robot_state = RobotState(robot_model)
+        robot_state.update()
         jacobian = robot_state.get_jacobian(
             joint_model_group_name="panda_arm",
             reference_point_position=np.array([0.0, 0.0, 0.0]),
@@ -80,6 +83,7 @@ class TestRobotState(unittest.TestCase):
             urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
         )
         robot_state = RobotState(robot_model)
+        robot_state.update()
         jacobian = robot_state.get_jacobian(
             joint_model_group_name="panda_arm",
             link_name="panda_link6",
@@ -97,7 +101,7 @@ class TestRobotState(unittest.TestCase):
             urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
         )
         robot_state = RobotState(robot_model)
-
+        robot_state.update()
         joint_group_positions = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
         robot_state.set_joint_group_positions(
             joint_model_group_name="panda_arm", position_values=joint_group_positions
@@ -105,7 +109,7 @@ class TestRobotState(unittest.TestCase):
 
         self.assertEqual(
             joint_group_positions.tolist(),
-            robot_state.copy_joint_group_positions("panda_arm").tolist(),
+            robot_state.get_joint_group_positions("panda_arm").tolist(),
         )
 
     def test_set_joint_group_velocities(self):
@@ -116,7 +120,7 @@ class TestRobotState(unittest.TestCase):
             urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
         )
         robot_state = RobotState(robot_model)
-
+        robot_state.update()
         joint_group_velocities = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
         robot_state.set_joint_group_velocities(
             joint_model_group_name="panda_arm", velocity_values=joint_group_velocities
@@ -124,7 +128,7 @@ class TestRobotState(unittest.TestCase):
 
         self.assertEqual(
             joint_group_velocities.tolist(),
-            robot_state.copy_joint_group_velocities("panda_arm").tolist(),
+            robot_state.get_joint_group_velocities("panda_arm").tolist(),
         )
 
     def test_set_joint_group_accelerations(self):
@@ -135,7 +139,7 @@ class TestRobotState(unittest.TestCase):
             urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
         )
         robot_state = RobotState(robot_model)
-
+        robot_state.update()
         joint_group_accelerations = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
         robot_state.set_joint_group_accelerations(
             joint_model_group_name="panda_arm",
@@ -144,32 +148,32 @@ class TestRobotState(unittest.TestCase):
 
         self.assertEqual(
             joint_group_accelerations.tolist(),
-            robot_state.copy_joint_group_accelerations("panda_arm").tolist(),
+            robot_state.get_joint_group_accelerations("panda_arm").tolist(),
         )
 
     # TODO (peterdavidfagan): requires kinematics solver to be loaded
-    def test_set_from_ik(self):
-        """
-        Test that the robot state can be set from an IK solution
-        """
-        robot_model = RobotModel(
-            urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
-        )
-        robot_state = RobotState(robot_model)
+    # def test_set_from_ik(self):
+    #    """
+    #    Test that the robot state can be set from an IK solution
+    #    """
+    #    robot_model = RobotModel(
+    #        urdf_xml_path="./fixtures/panda.urdf", srdf_xml_path="./fixtures/panda.srdf"
+    #    )
+    #    robot_state = RobotState(robot_model)
+    #    robot_state.update()
+    #    pose = Pose()
+    #    pose.position.x = 0.5
+    #    pose.position.y = 0.5
+    #    pose.position.z = 0.5
+    #    pose.orientation.w = 1.0
 
-        pose = Pose()
-        pose.position.x = 0.5
-        pose.position.y = 0.5
-        pose.position.z = 0.5
-        pose.orientation.w = 1.0
+    #    robot_state.set_from_ik(
+    #        joint_model_group_name="panda_arm",
+    #        geometry_pose=pose,
+    #        tip_name="panda_link8",
+    #    )
 
-        robot_state.set_from_ik(
-            joint_model_group_name="panda_arm",
-            geometry_pose=pose,
-            tip_name="panda_link8",
-        )
-
-        self.assertEqual(robot_state.get_pose("panda_link8"), pose)
+    #    self.assertEqual(robot_state.get_pose("panda_link8"), pose)
 
 
 if __name__ == "__main__":
