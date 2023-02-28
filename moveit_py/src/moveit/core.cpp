@@ -46,6 +46,7 @@
 #include "moveit_core/robot_model/robot_model.h"
 #include "moveit_core/robot_state/robot_state.h"
 #include "moveit_core/robot_trajectory/robot_trajectory.h"
+#include "moveit_core/transforms/transforms.h"
 
 PYBIND11_MODULE(core, m)
 {
@@ -71,6 +72,7 @@ PYBIND11_MODULE(core, m)
   moveit_py::bind_robot_model::init_robot_model(m);
   moveit_py::bind_robot_state::init_robot_state(m);
   moveit_py::bind_robot_trajectory::init_robot_trajectory(m);
+  moveit_py::bind_transforms::init_transforms(m);
   // TODO (peterdavidfagan): complete LinkModel bindings
   // LinkModel
   // py::class_<moveit::core::LinkModel>(m, "LinkModel");
