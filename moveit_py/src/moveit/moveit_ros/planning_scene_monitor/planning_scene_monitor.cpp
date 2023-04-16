@@ -122,6 +122,12 @@ void init_planning_scene_monitor(py::module& m)
 	       Stops the state monitor.
 	   )")
 
+      .def("start_world_geometry_monitor", &planning_scene_monitor::PlanningSceneMonitor::startWorldGeometryMonitor,
+           R"(Starts the world geometry monitor.)")
+
+      .def("stop_world_geometry_monitor", &planning_scene_monitor::PlanningSceneMonitor::stopWorldGeometryMonitor,
+           R"(Stops the world geometry monitor.)")
+
       .def("wait_for_current_robot_state", &planning_scene_monitor::PlanningSceneMonitor::waitForCurrentRobotState,
            R"(
 	   Waits for the current robot state to be received.
